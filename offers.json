@@ -1,0 +1,469 @@
+{
+ "updated": "2026-11-19",
+ "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance.",
+ "offers": [
+  {
+   "id": "orange",
+   "featured": true,
+   "intervention": true,
+   "name": "Orange Maison Protégée",
+   "sub": "Télésurveillance 24h/24, intervention d'un agent",
+   "monthly": {
+    "appart": 30,
+    "maison": 40
+   },
+   "upfront": {
+    "appart": 49,
+    "maison": 0
+   },
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 8,
+     "upfront": 0,
+     "note": "8 €/mois",
+     "est": false
+    },
+    "camInt": {
+     "monthly": 5,
+     "upfront": 0,
+     "note": "5 €/mois",
+     "est": false
+    },
+    "smoke": {
+     "monthly": 2.5,
+     "upfront": 0,
+     "est": false,
+     "note": "2,50 €/mois"
+    },
+    "flood": {
+     "monthly": 2.5,
+     "upfront": 0,
+     "est": false,
+     "note": "2,50 €/mois"
+    }
+   },
+   "chips": [
+    "Installation incluse",
+    "Engagement 12 mois"
+   ],
+   "bad": [],
+   "promos": [
+    {
+     "label": "Option caméra extérieure à 1 €/mois sans engagement, au lieu de 8 €/mois",
+     "start": "2026-11-19",
+     "end": null,
+     "options": {
+      "cam": {
+       "monthly": 1,
+       "upfront": 0,
+       "note": "1 €/mois sans engagement (au lieu de 8 €)"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "verisure",
+   "intervention": true,
+   "name": "Verisure",
+   "sub": "Télésurveillance 24h/24, intervention, sur devis",
+   "monthly": {
+    "appart": 34.9,
+    "maison": 34.9
+   },
+   "upfront": 439,
+   "engagement": 36,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 199,
+     "est": true,
+     "note": "≈ 199 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 79,
+     "est": true,
+     "note": "≈ 79 € d'achat"
+    }
+   },
+   "chips": [
+    "Matériel + installation à payer",
+    "Engagement 36 mois"
+   ],
+   "bad": [
+    0,
+    1
+   ],
+   "promos": [
+    {
+     "label": "Remise de 200 € HT sur l'installation si posée sous 7 jours",
+     "start": "2026-01-01",
+     "end": null,
+     "upfront": 219
+    }
+   ]
+  },
+  {
+   "id": "homiris-s",
+   "intervention": true,
+   "name": "Homiris Sérénité",
+   "sub": "EPS (Crédit Mutuel, CIC), intervention d'un agent",
+   "monthly": {
+    "appart": 32.5,
+    "maison": 40
+   },
+   "upfront": 0,
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 239,
+     "est": true,
+     "note": "≈ 199 € d'achat + 40 € de mise en service"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 129,
+     "est": false,
+     "note": "89 € d'achat + 40 € de mise en service"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 0,
+     "note": "inclus dans Sérénité",
+     "est": false
+    },
+    "flood": {
+     "monthly": 1.5,
+     "upfront": 0,
+     "est": false,
+     "note": "1,50 €/mois"
+    }
+   },
+   "chips": [
+    "Matériel en location",
+    "Engagement 12 mois"
+   ],
+   "bad": [],
+   "promos": [],
+   "video": {
+    "monthly": 3.99,
+    "note": "service « La Vidéo » 3,99 €/mois"
+   }
+  },
+  {
+   "id": "homiris-c",
+   "intervention": false,
+   "name": "Homiris Confort",
+   "sub": "EPS : vous êtes alerté, l'agent se déplace en option",
+   "monthly": {
+    "appart": 22.5,
+    "maison": 27.5
+   },
+   "upfront": 0,
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 239,
+     "est": true,
+     "note": "≈ 199 € d'achat + 40 € de mise en service"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 129,
+     "est": false,
+     "note": "89 € d'achat + 40 € de mise en service"
+    },
+    "smoke": {
+     "monthly": 3,
+     "upfront": 0,
+     "est": true,
+     "note": "≈ 3 €/mois"
+    },
+    "flood": {
+     "monthly": 1.5,
+     "upfront": 0,
+     "est": false,
+     "note": "1,50 €/mois"
+    }
+   },
+   "chips": [
+    "Sans intervention systématique",
+    "Engagement 12 mois"
+   ],
+   "bad": [
+    0
+   ],
+   "promos": [],
+   "video": {
+    "monthly": 3.99,
+    "note": "service « La Vidéo » 3,99 €/mois"
+   }
+  },
+  {
+   "id": "ima",
+   "intervention": true,
+   "name": "IMA Protect Tout inclus",
+   "sub": "Filiale MAIF/MACIF, télésurveillance 24h/24",
+   "monthly": {
+    "appart": 42.5,
+    "maison": 42.5
+   },
+   "upfront": 99,
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 199,
+     "est": true,
+     "note": "≈ 199 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 79,
+     "est": true,
+     "note": "≈ 79 € d'achat"
+    }
+   },
+   "chips": [
+    "Mise en service 99 €",
+    "Matériel en location",
+    "Engagement 12 mois"
+   ],
+   "bad": [
+    0
+   ],
+   "promos": []
+  },
+  {
+   "id": "nexecur",
+   "intervention": true,
+   "name": "Nexecur Intégrale",
+   "sub": "Crédit Agricole, télésurveillance 24h/24",
+   "monthly": {
+    "appart": 32.9,
+    "maison": 32.9
+   },
+   "upfront": 149,
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 199,
+     "est": true,
+     "note": "≈ 199 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 79,
+     "est": true,
+     "note": "≈ 79 € d'achat"
+    }
+   },
+   "chips": [
+    "Installation 149 €",
+    "Engagement 12 mois"
+   ],
+   "bad": [
+    0
+   ],
+   "promos": [
+    {
+     "label": "6 mois d'abonnement offerts",
+     "start": "2026-11-04",
+     "end": "2026-11-30",
+     "freeMonths": 6
+    }
+   ]
+  },
+  {
+   "id": "sector",
+   "intervention": true,
+   "name": "Sector Alarm",
+   "sub": "Télésurveillance 24h/24, sur devis",
+   "monthly": {
+    "appart": 37.9,
+    "maison": 37.9
+   },
+   "upfront": 799,
+   "engagement": 36,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 199,
+     "est": true,
+     "note": "≈ 199 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 79,
+     "est": true,
+     "note": "≈ 79 € d'achat"
+    }
+   },
+   "chips": [
+    "Matériel à acheter",
+    "Engagement 36 mois"
+   ],
+   "bad": [
+    0,
+    1
+   ],
+   "promos": [
+    {
+     "label": "Matériel à 199 € sous conditions",
+     "start": "2026-01-01",
+     "end": null,
+     "upfront": 199
+    }
+   ]
+  },
+  {
+   "id": "sfr",
+   "intervention": false,
+   "name": "SFR Maison Sécurisée",
+   "sub": "Autosurveillance, tarif non-abonné SFR",
+   "monthly": {
+    "appart": 14.99,
+    "maison": 14.99
+   },
+   "upfront": 121,
+   "engagement": 0,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 0,
+     "note": "incluse dans le Pack Alerte Vidéo",
+     "est": false
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 49,
+     "est": true,
+     "note": "≈ 49 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 49,
+     "est": true,
+     "note": "≈ 49 € d'achat"
+    }
+   },
+   "chips": [
+    "Pas de centre 24h/24",
+    "Matériel à acheter",
+    "Sans engagement"
+   ],
+   "bad": [
+    0,
+    1
+   ],
+   "promos": []
+  },
+  {
+   "id": "somfy",
+   "intervention": false,
+   "name": "Somfy Home Alarm",
+   "sub": "Kit à poser soi-même + télésurveillance 9,99 €/mois",
+   "monthly": {
+    "appart": 9.99,
+    "maison": 9.99
+   },
+   "upfront": 369,
+   "engagement": 0,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 249,
+     "est": true,
+     "note": "≈ 249 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 69,
+     "est": true,
+     "note": "≈ 69 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 59,
+     "est": true,
+     "note": "≈ 59 € d'achat"
+    }
+   },
+   "chips": [
+    "Kit 369 € à acheter",
+    "Pose par vos soins",
+    "Sans engagement"
+   ],
+   "bad": [
+    0,
+    1
+   ],
+   "promos": []
+  }
+ ]
+}

@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulateur Télésurveillance</title>
+<style>
+html{color-scheme:light}body{margin:0;font-size:14px}img{max-width:100%}
+/* Layout : panneau de réglages en haut, offre mise en avant, puis classement avec barres de coût à l'échelle */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#14202e; --muted:#5b6878; --line:#dde3ea;
+  --accent:#e8590c; --accent-soft:#fff1e8; --accent-ink:#b0430a;
+  --good:#1f8a5b; --warn:#b26a00; --bar:#c7d0db;
+  --display:"HelvNeueOrange", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --body:"HelvNeueOrange", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#18212d; --ink:#e8edf3; --muted:#9aa7b6; --line:#2a3644;
+  --accent:#ff8a3d; --accent-soft:#2a1d14; --accent-ink:#ffb27f;
+  --good:#4cc38a; --warn:#f0b64a; --bar:#3a4757; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#18212d; --ink:#e8edf3; --muted:#9aa7b6; --line:#2a3644;
+  --accent:#ff8a3d; --accent-soft:#2a1d14; --accent-ink:#ffb27f;
+  --good:#4cc38a; --warn:#f0b64a; --bar:#3a4757; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:22px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
+.lead{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.field label.lbl{display:block;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:500 .95rem var(--body);padding:9px 6px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.seg button:focus-visible,.toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;width:100%;font:500 .95rem var(--body);color:var(--ink);text-align:left}
+.toggle .sw{width:38px;height:22px;border-radius:11px;background:var(--bar);position:relative;flex:none;transition:background .15s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.toggle[aria-pressed="true"] .sw{background:var(--accent)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(16px)}
+@media (prefers-reduced-motion:reduce){.toggle .sw,.toggle .sw::after{transition:none}}
+
+.hero{background:var(--accent-soft);border:2px solid var(--accent);border-radius:16px;padding:20px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.hero .tag{display:inline-block;background:var(--accent);color:#fff;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.hero h2{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:8px 0 4px}
+.hero ul{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem}
+.hero li::before{content:"✓ ";color:var(--good);font-weight:700}
+.hero .price{text-align:right}
+.hero .big{font-family:var(--display);font-weight:700;font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.hero .sub{color:var(--muted);font-size:.85rem}
+.promo{grid-column:1/-1;display:flex;gap:10px;align-items:center;background:var(--surface);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:.92rem}
+.promo b{color:var(--accent-ink)}
+.promo s{color:var(--muted)}
+
+.listhead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.listhead h3{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
+.listhead span{color:var(--muted);font-size:.88rem}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;
+  grid-template-columns:28px minmax(0,1.4fr) minmax(0,2fr) 130px;gap:14px;align-items:center}
+.row.me{border:2px solid var(--accent)}
+.rank{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.row.me .rank{color:var(--accent)}
+.name{font-weight:600}
+.name small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.chip{font-size:.72rem;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.bad{border-color:var(--warn);color:var(--warn)}
+.chip.ok{border-color:var(--good);color:var(--good)}
+.barbox{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar i.up{background:var(--warn)}
+.bar i.mo{background:var(--bar)}
+.row.me .bar i.mo{background:var(--accent)}
+.detail{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.total{text-align:right;font-variant-numeric:tabular-nums}
+.total b{font-family:var(--display);font-size:1.3rem;display:block;white-space:nowrap}
+.total span{font-size:.78rem;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:.8rem;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.notes{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px;max-width:80ch}
+.notes p{margin:0}
+@media (max-width:640px){
+  .hero{grid-template-columns:1fr}
+  .hero .price{text-align:left}
+  .row{grid-template-columns:24px minmax(0,1fr) auto}
+  .barbox{grid-column:2/-1;grid-row:2}
+}
+
+.field.wide{grid-column:1/-1}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 .92rem var(--body);padding:8px 14px;border-radius:99px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.pill::before{content:"";width:14px;height:14px;border-radius:4px;border:1.5px solid var(--muted);flex:none}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pill[aria-pressed="true"]::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent-soft)}
+.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.simu{display:flex;flex-direction:column;gap:22px}
+.quiz{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.8rem;color:var(--muted)}
+.progress{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.quiz h2{font-family:var(--display);font-weight:600;font-size:1.35rem;margin:0;text-wrap:balance}
+.quiz .hint{color:var(--muted);font-size:.9rem;margin:-8px 0 0}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.ans{border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 .98rem var(--body);padding:13px 14px;border-radius:10px;cursor:pointer;text-align:left}
+.ans:hover{border-color:var(--accent)}
+.ans:focus-visible,.link:focus-visible,.go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.numrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.numrow input{font:600 1.3rem var(--display);width:130px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.go{border:0;background:var(--ink);color:var(--surface);font:600 .95rem var(--body);padding:12px 18px;border-radius:10px;cursor:pointer}
+.link{border:0;background:none;color:var(--muted);font:500 .85rem var(--body);text-decoration:underline;cursor:pointer;padding:0}
+.qnav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.mine{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.mine h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin:0;text-wrap:balance}
+.mine .gain{font-family:var(--display);font-weight:700;color:var(--good);font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.args{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.arg{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.arg b{display:block;margin-bottom:4px}
+.arg p{margin:0;font-size:.9rem;color:var(--muted)}
+.cur-tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--ink);color:var(--surface);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
+@media (prefers-reduced-motion:reduce){.progress i{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Combien coûte vraiment votre télésurveillance ?</h1>
+    <p class="lead">Quelques questions sur votre situation, puis le simulateur compare le coût réel de chaque offre : abonnement, matériel à acheter, installation et options.</p>
+  </header>
+
+  <section class="quiz" id="quiz" aria-live="polite"></section>
+  <section class="mine" id="mine" hidden aria-live="polite"></section>
+
+  <div id="simu" class="simu" hidden>
+
+  <section class="panel" aria-label="Vos critères">
+    <div class="field">
+      <label class="lbl" id="l-home">Logement</label>
+      <div class="seg" role="group" aria-labelledby="l-home" id="seg-home">
+        <button type="button" id="home-appart" data-v="appart" aria-pressed="false">Appartement</button>
+        <button type="button" id="home-maison" data-v="maison" aria-pressed="true">Maison</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl" id="l-dur">Durée comparée</label>
+      <div class="seg" role="group" aria-labelledby="l-dur" id="seg-dur">
+        <button type="button" id="dur-12" data-v="12" aria-pressed="false">1 an</button>
+        <button type="button" id="dur-24" data-v="24" aria-pressed="false">2 ans</button>
+        <button type="button" id="dur-36" data-v="36" aria-pressed="true">3 ans</button>
+      </div>
+    </div>
+    <div class="field wide">
+      <label class="lbl" id="l-opt">Options souhaitées</label>
+      <div class="pills" role="group" aria-labelledby="l-opt" id="opts"></div>
+    </div>
+  </section>
+
+  <section class="hero" id="hero" aria-live="polite"></section>
+
+  <section>
+    <div class="listhead">
+      <h3>Classement par coût total</h3>
+      <span id="listsub"></span>
+    </div>
+    <div class="legend" style="margin:8px 0 10px">
+      <span><i style="background:var(--warn)"></i>Matériel et installation à payer au départ</span>
+      <span><i style="background:var(--bar)"></i>Abonnements cumulés</span>
+    </div>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  </div>
+
+  <footer class="notes">
+    <p><b>Méthode.</b> Coût total = frais de départ + mensualités sur la durée choisie. Si l'engagement est plus long que la durée choisie, toutes les mensualités de l'engagement sont comptées, car vous devrez les payer.</p>
+    <p><b>Sources.</b> Prix TTC indicatifs pour particuliers, relevés le <span id="upd">19/11/2026</span> sur les sites des opérateurs et des comparateurs publics (Selectra, Degrouptest, Clubic, Presse-citron). Verisure et Sector Alarm fonctionnent sur devis : nous retenons leurs prix d'appel promotionnels, souvent dépassés quand on ajoute des équipements. Les prix marqués ≈ sont des estimations. Les promotions s'appliquent automatiquement pendant leur période de validité.</p>
+    <p><b>Options.</b> Chez Orange, caméras et détecteurs sont loués avec l'abonnement : rien à acheter. Chez la plupart des concurrents, ils s'achètent en plus. Leur prix est rarement public : les montants marqués ≈ sont des estimations à confirmer sur devis.</p>
+    <p><b>Autosurveillance.</b> SFR Maison Sécurisée et Somfy en mode « à la carte » ne sont pas des télésurveillances 24h/24 permanentes : c'est vous qui recevez les alertes (Somfy permet d'activer un centre de surveillance pendant vos absences).</p>
+    <p>Les marques citées appartiennent à leurs propriétaires. Vérifiez les conditions auprès de chaque opérateur avant de souscrire.</p>
+  </footer>
+</div>
+
+<script>
+const OPTS = [
+  { k:"cam",    label:"Caméra extérieure" },
+  { k:"camInt", label:"Caméra intérieure" },
+  { k:"smoke",  label:"Détecteur de fumée" },
+  { k:"flood",  label:"Détecteur d'inondation" },
+];
+let OFFERS = [];
+const state = { home:"maison", dur:36, opts:{ cam:true, camInt:false, smoke:false, flood:false } };
+try{ const s = JSON.parse(localStorage.getItem("simu-ts2")||"null"); if(s){ Object.assign(state, s); } }catch(e){}
+
+const eur = (n, d=0) => n.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d}) + " €";
+const today = new Date().toISOString().slice(0,10);
+const frDate = d => d.split("-").reverse().join("/");
+const picked = () => OPTS.filter(o=>state.opts[o.k]);
+const NONE = { monthly:0, upfront:0, note:"non proposé", est:false };
+
+// Applique les promos en cours : chaque champ présent dans une promo remplace la valeur de base.
+function effective(o){
+  const options = {};
+  OPTS.forEach(({k})=>options[k] = { ...NONE, ...((o.options||{})[k]||{}) });
+  const e = { ...o, options, monthly:{...o.monthly}, freeMonths:0, active:[] };
+  (o.promos||[]).forEach(p=>{
+    if((p.start && today < p.start) || (p.end && today > p.end)) return;
+    e.active.push(p);
+    if(p.monthly) Object.assign(e.monthly, p.monthly);
+    if(p.upfront!=null) e.upfront = p.upfront;
+    if(p.freeMonths) e.freeMonths += p.freeMonths;
+    if(p.options) Object.entries(p.options).forEach(([k,v])=>Object.assign(e.options[k], v));
+  });
+  return e;
+}
+
+function compute(o){
+  const sel = picked().map(x=>o.options[x.k]);
+  const anyCam = state.opts.cam || state.opts.camInt;
+  const months = Math.max(state.dur, o.engagement);
+  const optMonthly = sel.reduce((t,x)=>t+x.monthly,0) + (anyCam && o.video ? o.video.monthly : 0);
+  const optBuy = sel.reduce((t,x)=>t+x.upfront,0);
+  const base = typeof o.upfront === "object" ? o.upfront[state.home] : o.upfront;
+  const monthly = o.monthly[state.home] + optMonthly;
+  const upfront = base + optBuy;
+  const free = Math.min(o.freeMonths, months);
+  const subs = monthly * (months - free);
+  return { months, free, monthly, upfront, base, optBuy, subs, total: upfront + subs, anyCam,
+    est: sel.some(x=>x.est), locked: o.engagement > state.dur, hasOpts: sel.length>0 };
+}
+
+function render(){
+  document.querySelectorAll("#seg-home button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===state.home));
+  document.querySelectorAll("#seg-dur button").forEach(b=>b.setAttribute("aria-pressed", +b.dataset.v===state.dur));
+  document.querySelectorAll("#opts .pill").forEach(b=>b.setAttribute("aria-pressed", !!state.opts[b.dataset.k]));
+
+  const res = OFFERS.map(effective).map(o=>({o, r:compute(o)})).sort((a,b)=>a.r.total-b.r.total);
+  if(!res.length) return;
+  const max = Math.max(...res.map(x=>x.r.total));
+  const durTxt = state.dur===12 ? "1 an" : state.dur/12 + " ans";
+  const optList = picked().map(x=>x.label.toLowerCase()).join(", ");
+  document.getElementById("listsub").textContent = `${state.home==="maison"?"Maison":"Appartement"}, ${durTxt}${optList?`, avec ${optList}`:""}`;
+
+  const me = res.find(x=>x.o.featured);
+  if(me){
+    const full = res.filter(x=>x.o.intervention);
+    const rankFull = full.indexOf(me)+1;
+    const veri = res.find(x=>x.o.id==="verisure");
+    const vsVeri = veri ? veri.r.total - me.r.total : 0;
+    const promos = me.o.active.map(p=>{
+      const optKeys = Object.keys(p.options||{});
+      const hint = optKeys.length && !optKeys.some(k=>state.opts[k]) ? " Cochez l'option ci-dessus pour l'inclure." : "";
+      return `<div class="promo"><span><b>Promo${p.start?` depuis le ${frDate(p.start).slice(0,5)}`:""} :</b> ${p.label}${p.end?` (jusqu'au ${frDate(p.end)})`:""}.${hint}</span></div>`;
+    }).join("");
+    document.getElementById("hero").innerHTML = `
+      <div>
+        <span class="tag">Notre sélection</span>
+        <h2>${me.o.name}</h2>
+        <div>Tout compris pour <b>${eur(me.r.monthly,2).replace(",00","")}/mois</b>${optList?`, ${optList} inclus`:""}. ${rankFull===1?"L'offre de télésurveillance avec intervention la moins chère pour votre profil.":`N°${rankFull} des télésurveillances avec intervention pour votre profil.`}</div>
+        <ul>
+          <li>Installation par un technicien incluse</li>
+          <li>${me.r.base ? `Frais d'accès au service : ${eur(me.r.base)}` : "Frais d'accès au service offerts"}</li>
+          <li>${me.r.hasOpts ? "Rien à acheter, options comprises" : "Aucun matériel à acheter"}</li>
+          <li>Engagement 12 mois seulement</li>
+          <li>Intervention d'un agent en cas d'alerte</li>
+        </ul>
+      </div>
+      <div class="price">
+        <div class="big">${eur(me.r.total)}</div>
+        <div class="sub">sur ${durTxt}, ${me.r.upfront?eur(me.r.upfront):"0 €"} à payer au départ</div>
+        ${vsVeri>0?`<div class="sub" style="color:var(--good);font-weight:600;margin-top:4px">${eur(vsVeri)} de moins que Verisure</div>`:""}
+      </div>${promos}`;
+  }
+
+  document.getElementById("rows").innerHTML = res.map((x,i)=>{
+    const {o,r}=x;
+    const upW = r.upfront/max*100, moW = r.subs/max*100;
+    const chips = o.chips.map((c,j)=>`<span class="chip ${o.bad.includes(j)?"bad":(o.featured?"ok":"")}">${c}</span>`).join("")
+      + (r.hasOpts ? (r.optBuy ? `<span class="chip bad">Options à acheter : ${r.est?"≈ ":""}${eur(r.optBuy)}</span>` : `<span class="chip ok">Options sans achat</span>`) : "")
+      + (o.featured ? "" : o.active.map(p=>`<span class="chip ok">Promo : ${p.label}${p.end?` jusqu'au ${frDate(p.end)}`:""}</span>`).join(""));
+    const lock = r.locked ? ` · engagement ${o.engagement} mois compté en entier` : "";
+    const free = r.free ? ` (dont ${r.free} offerts)` : "";
+    const optTxt = picked().map(p=>`<br>${p.label} : ${o.options[p.k].note}`).join("") + (r.anyCam && o.video ? `<br>Vidéo : ${o.video.note}` : "");
+    return `<div class="row ${o.featured?"me":""}">
+      <div class="rank">${i+1}</div>
+      <div class="name">${o.name}${quiz.has && prov() && prov().ids.includes(o.id) ? '<span class="cur-tag">Votre opérateur</span>' : ""}<small>${o.sub}</small><div class="chips">${chips}</div></div>
+      <div class="barbox">
+        <div class="bar" role="img" aria-label="Départ ${eur(r.upfront)}, abonnements ${eur(r.subs)}"><i class="up" style="width:${upW}%"></i><i class="mo" style="width:${moW}%"></i></div>
+        <div class="detail">${eur(r.upfront)} au départ + ${eur(r.monthly,2)} × ${r.months} mois${free}${lock}${optTxt}</div>
+      </div>
+      <div class="total"><b>${r.est?"≈ ":""}${eur(r.total)}</b><span>soit ${eur(r.total/state.dur,0)}/mois</span></div>
+    </div>`;
+  }).join("");
+
+  try{ localStorage.setItem("simu-ts2", JSON.stringify(state)); }catch(e){}
+}
+
+document.getElementById("opts").innerHTML = OPTS.map(o=>`<button type="button" class="pill" id="opt-${o.k}" data-k="${o.k}" aria-pressed="false">${o.label}</button>`).join("");
+document.getElementById("opts").addEventListener("click",e=>{const b=e.target.closest(".pill"); if(b){state.opts[b.dataset.k]=!state.opts[b.dataset.k]; render(); if(!document.getElementById("mine").hidden) renderMine();}});
+document.getElementById("seg-home").addEventListener("click",e=>{const b=e.target.closest("button"); if(b){state.home=b.dataset.v; render(); if(!document.getElementById("mine").hidden) renderMine();}});
+document.getElementById("seg-dur").addEventListener("click",e=>{const b=e.target.closest("button"); if(b){state.dur=+b.dataset.v; render();}});
+
+// ---------- Questionnaire ----------
+const PROVIDERS = [
+  { v:"verisure", label:"Verisure", ids:["verisure"] },
+  { v:"homiris", label:"Homiris (EPS)", ids:["homiris-s","homiris-c"] },
+  { v:"ima", label:"IMA Protect", ids:["ima"] },
+  { v:"nexecur", label:"Nexecur", ids:["nexecur"] },
+  { v:"sector", label:"Sector Alarm", ids:["sector"] },
+  { v:"sfr", label:"SFR Maison Sécurisée", ids:["sfr"] },
+  { v:"somfy", label:"Somfy", ids:["somfy"] },
+  { v:"other", label:"Un autre opérateur", ids:[] },
+];
+const quiz = { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null };
+const prov = () => PROVIDERS.find(p=>p.v===quiz.provider);
+const offerById = id => OFFERS.find(o=>o.id===id);
+
+const STEPS = [
+  { key:"home", q:"Quel logement voulez-vous protéger ?", choices:[["appart","Un appartement"],["maison","Une maison"]],
+    set:v=>state.home=v },
+  { key:"has", q:"Avez-vous déjà une alarme avec télésurveillance ?", choices:[[true,"Oui, je suis déjà équipé"],[false,"Non, pas encore"]],
+    set:v=>quiz.has=v },
+  { key:"provider", when:()=>quiz.has, q:"Chez quel opérateur ?", choices:PROVIDERS.map(p=>[p.v,p.label]),
+    set:v=>quiz.provider=v },
+  { key:"engage", when:()=>quiz.has, q:"Vous êtes encore engagé pour combien de temps ?", hint:"Une estimation suffit.",
+    choices:[[0,"Je ne suis plus engagé"],[3,"Moins de 6 mois"],[9,"6 mois à 1 an"],[18,"1 à 2 ans"],[30,"Plus de 2 ans"],[-1,"Je ne sais pas"]],
+    set:v=>quiz.engage=v },
+  { key:"pay", when:()=>quiz.has, q:"Combien payez-vous par mois aujourd'hui ?", hint:"Le montant de votre prélèvement mensuel, options comprises.", type:"number" },
+  { key:"bought", when:()=>quiz.has, q:"Avez-vous acheté votre matériel d'alarme ?",
+    choices:[["yes","Oui, je l'ai acheté"],["no","Non, il est loué avec l'abonnement"],["unknown","Je ne sais pas"]],
+    set:v=>quiz.bought=v },
+  { key:"when", when:()=>quiz.has && quiz.bought==="yes", q:"Vous l'avez acheté il y a combien de temps ?",
+    choices:[[1,"Moins de 2 ans"],[3,"2 à 5 ans"],[6,"Plus de 5 ans"],[-1,"Je ne sais plus"]],
+    set:v=>quiz.when=v },
+  { key:"opts", q:"Quels équipements vous intéressent ?", hint:"Plusieurs choix possibles, ou aucun.", type:"opts" },
+];
+const visible = () => STEPS.filter(s=>!s.when || s.when());
+
+function renderQuiz(){
+  const steps = visible();
+  const st = steps[quiz.step];
+  const box = document.getElementById("quiz");
+  let body = "";
+  if(st.type==="number"){
+    const p = prov(); const o = p && p.ids[0] && offerById(p.ids[0]);
+    const guess = quiz.pay ?? (o ? Math.round(o.monthly[state.home]) : 35);
+    body = `<div class="numrow"><input id="q-pay" type="number" inputmode="decimal" min="0" step="0.5" value="${guess}" aria-label="Montant mensuel en euros"><span>€ / mois</span><button type="button" class="go" id="q-next">Continuer</button></div>`;
+  } else if(st.type==="opts"){
+    body = `<div class="pills" id="q-opts">${OPTS.map(o=>`<button type="button" class="pill" data-k="${o.k}" aria-pressed="${!!state.opts[o.k]}">${o.label}</button>`).join("")}</div>
+      <div><button type="button" class="go" id="q-next">Voir mon résultat</button></div>`;
+  } else {
+    body = `<div class="answers">${st.choices.map(([v,l],i)=>`<button type="button" class="ans" data-i="${i}">${l}</button>`).join("")}</div>`;
+  }
+  box.innerHTML = `
+    <div class="qtop"><span>Question ${quiz.step+1} sur ${steps.length}</span><button type="button" class="link" id="q-skip">Voir directement le comparatif</button></div>
+    <div class="progress"><i style="width:${(quiz.step)/steps.length*100}%"></i></div>
+    <h2>${st.q}</h2>${st.hint?`<p class="hint">${st.hint}</p>`:""}
+    ${body}
+    ${quiz.step>0?`<div class="qnav"><button type="button" class="link" id="q-back">← Question précédente</button></div>`:""}`;
+
+  box.querySelectorAll(".ans").forEach(b=>b.onclick=()=>{ st.set(st.choices[+b.dataset.i][0]); next(); });
+  const pills = box.querySelector("#q-opts");
+  if(pills) pills.onclick = e=>{ const b=e.target.closest(".pill"); if(!b) return; state.opts[b.dataset.k]=!state.opts[b.dataset.k]; b.setAttribute("aria-pressed", state.opts[b.dataset.k]); };
+  const nx = box.querySelector("#q-next");
+  if(nx) nx.onclick = ()=>{
+    if(st.type==="number"){ const v = parseFloat(String(box.querySelector("#q-pay").value).replace(",", ".")); quiz.pay = isFinite(v) && v>=0 ? v : 0; }
+    next();
+  };
+  const inp = box.querySelector("#q-pay"); if(inp){ inp.focus(); inp.onkeydown = e=>{ if(e.key==="Enter") nx.click(); }; }
+  const bk = box.querySelector("#q-back"); if(bk) bk.onclick = ()=>{ quiz.step--; renderQuiz(); };
+  box.querySelector("#q-skip").onclick = ()=>finish(false);
+}
+function next(){
+  if(quiz.step < visible().length-1){ quiz.step++; renderQuiz(); } else finish(true);
+}
+
+function finish(answered){
+  document.getElementById("quiz").hidden = true;
+  document.getElementById("simu").hidden = false;
+  state.dur = 36;
+  render();
+  if(answered) renderMine(); else document.getElementById("mine").hidden = true;
+  document.getElementById(answered?"mine":"simu").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+}
+
+function restart(){
+  Object.assign(quiz, { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null });
+  document.getElementById("mine").hidden = true;
+  document.getElementById("simu").hidden = true;
+  document.getElementById("quiz").hidden = false;
+  renderQuiz();
+  document.getElementById("quiz").scrollIntoView({block:"start"});
+}
+
+function renderMine(){
+  const H = 36;
+  const orange = effective(OFFERS.find(o=>o.featured));
+  const r = compute(orange);                       // state.dur = 36
+  const om = r.monthly, fas = r.base;
+  const optList = picked().map(x=>x.label.toLowerCase());
+  const args = [];
+  let head = "", gainHtml = "";
+
+  if(quiz.has){
+    const p = prov();
+    const name = p && p.v!=="other" ? p.label : "votre opérateur actuel";
+    const e = quiz.engage>0 ? Math.min(quiz.engage, H) : 0;
+    let stay = quiz.pay * H, extra = "";
+    // Si des options sont souhaitées, on les ajoute au coût actuel au tarif de l'opérateur (quand il est connu).
+    const cur = p && p.ids[0] && offerById(p.ids[0]) ? effective(offerById(p.ids[0])) : null;
+    if(cur && picked().length){
+      const sel = picked().map(x=>cur.options[x.k]);
+      const add = sel.reduce((t,x)=>t+x.upfront,0) + sel.reduce((t,x)=>t+x.monthly,0)*H;
+      stay += add; if(add>0) extra = ` en ajoutant les mêmes options chez ${name}`;
+    }
+    const sw = quiz.pay*e + fas + om*(H-e);
+    const gain = stay - sw;
+    if(gain > 20){
+      head = `En passant chez Orange${e?" à la fin de votre engagement":""}, vous pourriez économiser environ`;
+      gainHtml = `<div class="gain">${eur(gain)} sur 3 ans</div><p class="hint" style="margin:0">Calcul indicatif : ${eur(quiz.pay,2)}/mois aujourd'hui${extra}, contre ${eur(om,2)}/mois chez Orange${fas?` + ${eur(fas)} de frais d'accès au service`:""}.</p>`;
+    } else {
+      head = `Orange Maison Protégée vous reviendrait à ${eur(om,2)}/mois, tout compris.`;
+      gainHtml = `<p class="hint" style="margin:0">Vous payez aujourd'hui ${eur(quiz.pay,2)}/mois. Voici ce qu'Orange inclut dans ce prix.</p>`;
+    }
+    if(quiz.engage>0) args.push(["Votre engagement se termine dans environ "+(quiz.engage>=12?Math.round(quiz.engage/12*10)/10+" an"+(quiz.engage>=24?"s":""):quiz.engage+" mois"),
+      "Vous pouvez préparer le changement dès maintenant : vérifiez le préavis de votre contrat et choisissez une date d'installation Orange qui suit votre fin d'engagement."]);
+    else if(quiz.engage===0) args.push(["Vous êtes libre de changer", "Vérifiez simplement le préavis de résiliation de votre contrat actuel. L'installation Orange est faite par un technicien."]);
+    else args.push(["Votre date de fin d'engagement", "Elle figure sur votre contrat ou votre espace client. Avec Orange, l'engagement est de 12 mois, puis vous restez libre."]);
+    if(quiz.bought==="yes" && quiz.when===6) args.push(["Votre matériel a plus de 5 ans", "Chez Orange, le matériel est fourni, installé et entretenu pendant tout le contrat : aucun renouvellement à financer."]);
+    else if(quiz.bought==="yes") args.push(["Pas de nouvel achat", "Avec Orange, vous ne rachetez pas de matériel : centrale, détecteurs et sirène sont fournis et installés par un technicien."]);
+    else if(quiz.bought==="no") args.push(["Toujours rien à acheter", "Comme aujourd'hui, le matériel est fourni avec l'abonnement, installation comprise."]);
+    else args.push(["Rien à acheter", "Chez Orange, tout le matériel est inclus dans l'abonnement, installation comprise."]);
+  } else {
+    head = `Orange Maison Protégée : ${eur(om,2)}/mois tout compris${optList.length?", options incluses":""}.`;
+    gainHtml = `<p class="hint" style="margin:0">${fas?`${eur(fas)} de frais d'accès au service`:"Frais d'accès au service offerts"}, puis aucun autre frais à prévoir au départ.</p>`;
+    args.push(["Rien à acheter", "Centrale, détecteurs et sirène sont fournis et installés par un technicien, puis entretenus pendant tout le contrat."]);
+  }
+  if(optList.length){
+    const camPromo = state.opts.cam && orange.active.some(p=>p.options && p.options.cam);
+    args.push(["Vos options en location", `${optList.join(", ").replace(/^./,c=>c.toUpperCase())} : ${eur(OPTS.filter(o=>state.opts[o.k]).reduce((t,o)=>t+orange.options[o.k].monthly,0),2)}/mois au total chez Orange, sans achat d'équipement.${camPromo?" La caméra extérieure est en ce moment à 1 €/mois sans engagement.":""}`]);
+  } else if(orange.active.some(p=>p.options && p.options.cam)){
+    args.push(["Promo caméra extérieure", "En ce moment, l'option caméra extérieure est à 1 €/mois sans engagement, au lieu de 8 €/mois."]);
+  }
+  args.push(["Un agent peut intervenir", "Le centre de télésurveillance traite les alertes 24h/24 et envoie un agent si nécessaire."]);
+  if(!quiz.has || quiz.engage!==-1) args.push(["Engagement de 12 mois", "Après la première année, vous êtes libre de partir quand vous voulez."]);
+
+  const mine = document.getElementById("mine");
+  mine.hidden = false;
+  mine.innerHTML = `
+    <div class="qtop"><span>Votre situation</span><button type="button" class="link" id="m-restart">Modifier mes réponses</button></div>
+    <h2>${head}</h2>
+    ${gainHtml}
+    <div class="args">${args.slice(0,4).map(([t,p])=>`<div class="arg"><b>${t}</b><p>${p}</p></div>`).join("")}</div>
+    <p class="hint" style="margin:0">Le comparatif ci-dessous reprend vos réponses. Vous pouvez encore changer le logement, la durée ou les options.</p>`;
+  mine.querySelector("#m-restart").onclick = restart;
+}
+
+document.getElementById("rows").innerHTML = '<p class="detail">Chargement des tarifs…</p>';
+fetch("offers.json", {cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json(); }).then(d=>{
+  OFFERS = d.offers;
+  document.getElementById("upd").textContent = frDate(d.updated);
+  render();
+  renderQuiz();
+}).catch(()=>{
+  document.getElementById("rows").innerHTML = '<p class="detail">Les tarifs n\'ont pas pu être chargés. Rechargez la page.</p>';
+});
+</script>
+</body>
+</html>
