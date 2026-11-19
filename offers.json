@@ -83,16 +83,16 @@
    "engagement": 36,
    "options": {
     "cam": {
-     "monthly": 0,
-     "upfront": 199,
-     "est": true,
-     "note": "≈ 199 € d'achat"
+     "monthly": 8,
+     "upfront": 299,
+     "est": false,
+     "note": "pack V2 détecteur extérieur vidéo : 299 € + 8 €/mois"
     },
     "camInt": {
-     "monthly": 0,
-     "upfront": 149,
-     "est": true,
-     "note": "≈ 149 € d'achat"
+     "monthly": 5,
+     "upfront": 199,
+     "est": false,
+     "note": "pack A3 caméra intérieure : 199 € + 5 €/mois"
     },
     "smoke": {
      "monthly": 0,
@@ -123,10 +123,24 @@
      "upfront": 219
     },
     {
-     "label": "Black Friday : 3 premiers mois et serrure connectée offerts, tarifs réduits sur le matériel supplémentaire",
+     "label": "-50 % sur l'installation des packs complémentaires (caméras, détecteurs)",
      "start": "2026-11-09",
      "end": "2026-11-29",
-     "freeMonths": 3
+     "options": {
+      "cam": {
+       "upfront": 149.5,
+       "note": "pack V2 : 149,50 € au lieu de 299 €, + 8 €/mois"
+      },
+      "camInt": {
+       "upfront": 99.5,
+       "note": "pack A3 : 99,50 € au lieu de 199 €, + 5 €/mois"
+      }
+     }
+    },
+    {
+     "label": "Autre choix possible, Black Friday : 3 mois et serrure connectée offerts (non cumulable avec les remises ci-dessus, hors engagement 36 mois)",
+     "start": "2026-11-09",
+     "end": "2026-11-29"
     }
    ],
    "perks": [
