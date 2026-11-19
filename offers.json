@@ -60,6 +60,12 @@
        "note": "1 €/mois sans engagement (au lieu de 8 €)"
       }
      }
+    },
+    {
+     "label": "2 mois d'abonnement offerts",
+     "start": "2026-11-19",
+     "end": null,
+     "freeMonths": 2
     }
    ]
   },

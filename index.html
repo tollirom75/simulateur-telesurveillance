@@ -266,7 +266,7 @@ function render(){
       <div>
         <span class="tag">Notre sélection</span>
         <h2>${me.o.name}</h2>
-        <div>Tout compris pour <b>${eur(me.r.monthly,2).replace(",00","")}/mois</b>${optList?`, ${optList} inclus`:""}. ${rankFull===1?"L'offre de télésurveillance avec intervention la moins chère pour votre profil.":`N°${rankFull} des télésurveillances avec intervention pour votre profil.`}</div>
+        <div>Tout compris pour <b>${eur(me.r.monthly,2).replace(",00","")}/mois</b>${optList?`, avec ${optList}`:""}. ${rankFull===1?"L'offre de télésurveillance avec intervention la moins chère pour votre profil.":`N°${rankFull} des télésurveillances avec intervention pour votre profil.`}</div>
         <ul>
           <li>Installation par un technicien incluse</li>
           <li>${me.r.base ? `Frais d'accès au service : ${eur(me.r.base)}` : "Frais d'accès au service offerts"}</li>
@@ -424,7 +424,7 @@ function renderMine(){
       const add = sel.reduce((t,x)=>t+x.upfront,0) + sel.reduce((t,x)=>t+x.monthly,0)*H;
       stay += add; if(add>0) extra = ` en ajoutant les mêmes options chez ${name}`;
     }
-    const sw = quiz.pay*e + fas + om*(H-e);
+    const sw = quiz.pay*e + fas + om*Math.max(0, H-e-orange.freeMonths);
     const gain = stay - sw;
     if(gain > 20){
       head = `En passant chez Orange${e?" à la fin de votre engagement":""}, vous pourriez économiser environ`;
@@ -452,6 +452,7 @@ function renderMine(){
   } else if(orange.active.some(p=>p.options && p.options.cam)){
     args.push(["Promo caméra extérieure", "En ce moment, l'option caméra extérieure est à 1 €/mois sans engagement, au lieu de 8 €/mois."]);
   }
+  if(orange.freeMonths) args.unshift([`${orange.freeMonths} mois offerts en ce moment`, `Les ${orange.freeMonths} premiers mois d'abonnement Orange Maison Protégée sont offerts, soit ${eur(om*orange.freeMonths)} d'économie avec votre configuration.`]);
   args.push(["Un agent peut intervenir", "Le centre de télésurveillance traite les alertes 24h/24 et envoie un agent si nécessaire."]);
   if(!quiz.has || quiz.engage!==-1) args.push(["Engagement de 12 mois", "Après la première année, vous êtes libre de partir quand vous voulez."]);
 
