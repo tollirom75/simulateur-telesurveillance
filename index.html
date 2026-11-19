@@ -202,7 +202,7 @@ try{ const s = JSON.parse(localStorage.getItem("simu-ts2")||"null"); if(s){ Obje
 
 const eur = (n, d=0) => n.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d}) + " €";
 const today = new Date().toISOString().slice(0,10);
-const eurM = n => eur(n, Math.round(n*100)%100 ? 2 : 0);
+const eurM = n => eur(Math.round(n*100)/100, Math.round(n*100)%100 ? 2 : 0);
 const durShort = () => state.dur===12 ? "1 an" : state.dur/12 + " ans";
 const frDate = d => d.split("-").reverse().join("/");
 const picked = () => OPTS.filter(o=>state.opts[o.k]);
@@ -278,7 +278,7 @@ function render(){
       <div class="price">
         <div class="big">${eurM(me.r.monthly)}<small>/mois</small></div>
         <div class="sub">${me.r.upfront?`+ ${eur(me.r.upfront)} au départ`:"0 € à payer au départ"}</div>
-        <div class="sub">Total sur ${durTxt} : ${eur(me.r.total)}</div>
+        <div class="sub">Total sur ${durTxt} : ${eur(me.r.total)}, soit ${eurM(me.r.total/state.dur)}/mois</div>
         ${vsVeri>0?`<div class="sub" style="color:var(--good);font-weight:600;margin-top:4px">${eur(vsVeri)} de moins que Verisure</div>`:""}
       </div>${promos}`;
   }
@@ -299,7 +299,7 @@ function render(){
         <div class="bar" role="img" aria-label="Départ ${eur(r.upfront)}, abonnements ${eur(r.subs)}"><i class="up" style="width:${upW}%"></i><i class="mo" style="width:${moW}%"></i></div>
         <div class="detail">${eur(r.upfront)} au départ + ${eur(r.monthly,2)} × ${r.months} mois${free}${lock}${optTxt}</div>
       </div>
-      <div class="total"><b>${eurM(r.monthly)}<small>/mois</small></b><span>${r.upfront?`+ ${r.est?"≈ ":""}${eur(r.upfront)} au départ`:"0 € au départ"}</span><span>Total ${durShort()} : ${r.est?"≈ ":""}${eur(r.total)}</span></div>
+      <div class="total"><b>${eurM(r.monthly)}<small>/mois</small></b><span>${r.upfront?`+ ${r.est?"≈ ":""}${eur(r.upfront)} au départ`:"0 € au départ"}</span><span>Total ${durShort()} : ${r.est?"≈ ":""}${eur(r.total)}, soit ${eurM(r.total/state.dur)}/mois</span></div>
     </div>`;
   }).join("");
 
