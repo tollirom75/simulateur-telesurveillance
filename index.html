@@ -54,6 +54,10 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 .hero .sub{color:var(--muted);font-size:.85rem}
 .promo{grid-column:1/-1;display:flex;gap:10px;align-items:center;background:var(--surface);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;font-size:.92rem}
 .promo b{color:var(--accent-ink)}
+.promo{flex-direction:column;align-items:flex-start;gap:4px}
+.promo ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.promo em{font-style:normal;color:var(--muted)}
+.promo .pdate{color:var(--muted);font-size:.85em}
 .promo s{color:var(--muted)}
 
 .listhead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
@@ -257,11 +261,13 @@ function render(){
     const rankFull = full.indexOf(me)+1;
     const veri = res.find(x=>x.o.id==="verisure");
     const vsVeri = veri ? veri.r.total - me.r.total : 0;
-    const promos = me.o.active.map(p=>{
+    const items = me.o.active.map(p=>{
       const optKeys = Object.keys(p.options||{});
-      const hint = optKeys.length && !optKeys.some(k=>state.opts[k]) ? " Cochez l'option ci-dessus pour l'inclure." : "";
-      return `<div class="promo"><span><b>Promo${p.start?` depuis le ${frDate(p.start).slice(0,5)}`:""} :</b> ${p.label}${p.end?` (jusqu'au ${frDate(p.end)})`:""}.${hint}</span></div>`;
-    }).join("");
+      const hint = optKeys.length && !optKeys.some(k=>state.opts[k]) ? " <em>Cochez l'option ci-dessus pour en profiter.</em>" : "";
+      const when = p.end ? ` <span class="pdate">jusqu'au ${frDate(p.end)}</span>` : (p.start ? ` <span class="pdate">depuis le ${frDate(p.start).slice(0,5)}</span>` : "");
+      return `<li>${p.label}${when}${hint}</li>`;
+    });
+    const promos = items.length ? `<div class="promo"><b>${items.length>1?`${items.length} promos en cours`:"Promo en cours"}</b><ul>${items.join("")}</ul></div>` : "";
     document.getElementById("hero").innerHTML = `
       <div>
         <span class="tag">Notre sélection</span>
