@@ -189,7 +189,22 @@
     "Engagement 12 mois"
    ],
    "bad": [],
-   "promos": [],
+   "promos": [
+    {
+     "label": "3 mois d'abonnement offerts et sonde inondation offerte",
+     "start": "2026-11-02",
+     "end": "2026-11-28",
+     "freeMonths": 3,
+     "options": {
+      "flood": {
+       "monthly": 0,
+       "upfront": 0,
+       "est": false,
+       "note": "offerte (promo jusqu'au 28/11)"
+      }
+     }
+    }
+   ],
    "video": {
     "monthly": 3.99,
     "note": "service « La Vidéo » 3,99 €/mois"
@@ -240,7 +255,22 @@
    "bad": [
     0
    ],
-   "promos": [],
+   "promos": [
+    {
+     "label": "3 mois d'abonnement offerts et sonde inondation offerte",
+     "start": "2026-11-02",
+     "end": "2026-11-28",
+     "freeMonths": 3,
+     "options": {
+      "flood": {
+       "monthly": 0,
+       "upfront": 0,
+       "est": false,
+       "note": "offerte (promo jusqu'au 28/11)"
+      }
+     }
+    }
+   ],
    "video": {
     "monthly": 3.99,
     "note": "service « La Vidéo » 3,99 €/mois"
@@ -315,9 +345,9 @@
     },
     "camInt": {
      "monthly": 0,
-     "upfront": 149,
-     "est": true,
-     "note": "≈ 149 € d'achat"
+     "upfront": 0,
+     "est": false,
+     "note": "caméra HD intégrée à la centrale"
     },
     "smoke": {
      "monthly": 0,
@@ -341,10 +371,11 @@
    ],
    "promos": [
     {
-     "label": "6 mois d'abonnement offerts",
-     "start": "2026-11-04",
+     "label": "6 mois d'abonnement offerts et installation gratuite (devis établi en novembre)",
+     "start": "2026-11-01",
      "end": "2026-11-30",
-     "freeMonths": 6
+     "freeMonths": 6,
+     "upfront": 0
     }
    ],
    "perks": []
