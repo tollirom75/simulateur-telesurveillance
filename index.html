@@ -80,7 +80,9 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 .detail{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .total{text-align:right;font-variant-numeric:tabular-nums}
 .total b{font-family:var(--display);font-size:1.3rem;display:block;white-space:nowrap}
-.total span{font-size:.78rem;color:var(--muted)}
+.total span{font-size:.78rem;color:var(--muted);display:block}
+.total b small{font-size:.8rem;font-weight:500;color:var(--muted)}
+.hero .big small{font-size:1rem;font-weight:500;color:var(--muted)}
 .legend{display:flex;gap:14px;font-size:.8rem;color:var(--muted);flex-wrap:wrap}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 .notes{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px;max-width:80ch}
@@ -166,7 +168,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 
   <section>
     <div class="listhead">
-      <h3>Classement par coût total</h3>
+      <h3>Classement par coût total sur la durée</h3>
       <span id="listsub"></span>
     </div>
     <div class="legend" style="margin:8px 0 10px">
@@ -200,6 +202,8 @@ try{ const s = JSON.parse(localStorage.getItem("simu-ts2")||"null"); if(s){ Obje
 
 const eur = (n, d=0) => n.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d}) + " €";
 const today = new Date().toISOString().slice(0,10);
+const eurM = n => eur(n, Math.round(n*100)%100 ? 2 : 0);
+const durShort = () => state.dur===12 ? "1 an" : state.dur/12 + " ans";
 const frDate = d => d.split("-").reverse().join("/");
 const picked = () => OPTS.filter(o=>state.opts[o.k]);
 const NONE = { monthly:0, upfront:0, note:"non proposé", est:false };
@@ -272,8 +276,9 @@ function render(){
         </ul>
       </div>
       <div class="price">
-        <div class="big">${eur(me.r.total)}</div>
-        <div class="sub">sur ${durTxt}, ${me.r.upfront?eur(me.r.upfront):"0 €"} à payer au départ</div>
+        <div class="big">${eurM(me.r.monthly)}<small>/mois</small></div>
+        <div class="sub">${me.r.upfront?`+ ${eur(me.r.upfront)} au départ`:"0 € à payer au départ"}</div>
+        <div class="sub">Total sur ${durTxt} : ${eur(me.r.total)}</div>
         ${vsVeri>0?`<div class="sub" style="color:var(--good);font-weight:600;margin-top:4px">${eur(vsVeri)} de moins que Verisure</div>`:""}
       </div>${promos}`;
   }
@@ -294,7 +299,7 @@ function render(){
         <div class="bar" role="img" aria-label="Départ ${eur(r.upfront)}, abonnements ${eur(r.subs)}"><i class="up" style="width:${upW}%"></i><i class="mo" style="width:${moW}%"></i></div>
         <div class="detail">${eur(r.upfront)} au départ + ${eur(r.monthly,2)} × ${r.months} mois${free}${lock}${optTxt}</div>
       </div>
-      <div class="total"><b>${r.est?"≈ ":""}${eur(r.total)}</b><span>soit ${eur(r.total/state.dur,0)}/mois</span></div>
+      <div class="total"><b>${eurM(r.monthly)}<small>/mois</small></b><span>${r.upfront?`+ ${r.est?"≈ ":""}${eur(r.upfront)} au départ`:"0 € au départ"}</span><span>Total ${durShort()} : ${r.est?"≈ ":""}${eur(r.total)}</span></div>
     </div>`;
   }).join("");
 
