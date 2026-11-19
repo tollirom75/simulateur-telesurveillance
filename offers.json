@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-19",
- "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus).",
+ "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus). auto:true = autosurveillance (aucun centre de télésurveillance : l'abonné gère seul ses alertes).",
  "offers": [
   {
    "id": "orange",
@@ -215,7 +215,7 @@
    "id": "homiris-c",
    "intervention": false,
    "name": "Homiris Confort",
-   "sub": "EPS : vous êtes alerté, l'agent se déplace en option",
+   "sub": "EPS : le centre vous alerte, l'agent se déplace en option",
    "monthly": {
     "appart": 22.5,
     "maison": 27.5
@@ -432,7 +432,7 @@
    "id": "sfr",
    "intervention": false,
    "name": "SFR Maison Sécurisée",
-   "sub": "Autosurveillance, tarif non-abonné SFR",
+   "sub": "Autosurveillance : vous recevez les alertes sur votre téléphone",
    "monthly": {
     "appart": 14.99,
     "maison": 14.99
@@ -475,13 +475,14 @@
     1
    ],
    "promos": [],
-   "perks": []
+   "perks": [],
+   "auto": true
   },
   {
    "id": "somfy",
    "intervention": false,
    "name": "Somfy Home Alarm",
-   "sub": "Kit à poser soi-même + télésurveillance 9,99 €/mois",
+   "sub": "Kit à poser soi-même, télésurveillance activable 9,99 €/mois",
    "monthly": {
     "appart": 9.99,
     "maison": 9.99

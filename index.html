@@ -72,7 +72,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 .name{font-weight:600}
 .name small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
-.chip{font-size:.72rem;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip{font-size:.72rem;padding:2px 7px;border-radius:10px;border:1px solid var(--line);color:var(--muted);white-space:normal;max-width:100%}
 .chip.bad{border-color:var(--warn);color:var(--warn)}
 .chip.ok{border-color:var(--good);color:var(--good)}
 .barbox{display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -94,8 +94,10 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 @media (max-width:640px){
   .hero{grid-template-columns:1fr}
   .hero .price{text-align:left}
-  .row{grid-template-columns:24px minmax(0,1fr) auto}
-  .barbox{grid-column:2/-1;grid-row:2}
+  .row{grid-template-columns:24px minmax(0,1fr);row-gap:10px}
+  .barbox{grid-column:2;grid-row:auto}
+  .total{grid-column:2;text-align:left}
+  .vs tbody th{width:auto}
 }
 
 .field.wide{grid-column:1/-1}
@@ -131,6 +133,23 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 .arg p{margin:0;font-size:.9rem;color:var(--muted)}
 .cur-tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--ink);color:var(--surface);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
 @media (prefers-reduced-motion:reduce){.progress i{transition:none}}
+
+.vs-wrap{overflow-x:auto;margin:10px 0 4px}
+.vs{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.vs th,.vs td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.vs thead th{font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.vs thead th:nth-child(2){color:var(--good)}
+.vs thead th:nth-child(3){color:var(--warn)}
+.vs tbody th{font-weight:600;width:34%}
+.vs tr:last-child th,.vs tr:last-child td{border-bottom:0}
+.grp{margin-top:14px;padding-left:12px;border-left:3px solid var(--good)}
+.grp-2{border-left-color:var(--muted)}
+.grp-3{border-left-color:var(--warn)}
+.grp h4{margin:0;font-size:1rem}
+.grp p{margin:2px 0 4px;font-size:.85rem;color:var(--muted);max-width:75ch}
+.type-tag{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px;border:1px solid}
+.type-tag.tele{color:var(--good);border-color:var(--good)}
+.type-tag.auto{color:var(--warn);border-color:var(--warn)}
 </style>
 </head>
 <body>
@@ -172,9 +191,17 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 
   <section>
     <div class="listhead">
-      <h3>Classement par coût total sur la durée</h3>
+      <h3>Classement par type de service, puis par coût total</h3>
       <span id="listsub"></span>
     </div>
+    <div class="vs-wrap"><table class="vs">
+      <thead><tr><th></th><th>Télésurveillance</th><th>Autosurveillance</th></tr></thead>
+      <tbody>
+        <tr><th>Qui reçoit l'alerte ?</th><td>Un centre de surveillance, 24h/24</td><td>Vous seul, sur votre téléphone</td></tr>
+        <tr><th>Qui vérifie s'il y a intrusion ?</th><td>Un opérateur, avec photos ou vidéo</td><td>Vous, si vous êtes disponible</td></tr>
+        <tr><th>Qui intervient ?</th><td>Un agent est envoyé, les secours sont prévenus</td><td>Vous appelez vous-même la police</td></tr>
+        <tr><th>Vous êtes en réunion, en vol ou endormi ?</th><td>Le centre agit quand même</td><td>Personne ne réagit</td></tr>
+      </tbody></table></div>
     <div class="legend" style="margin:8px 0 10px">
       <span><i style="background:var(--warn)"></i>Matériel et installation à payer au départ</span>
       <span><i style="background:var(--bar)"></i>Abonnements cumulés</span>
@@ -188,7 +215,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
     <p><b>Méthode.</b> Coût total = frais de départ + mensualités sur la durée choisie. Si l'engagement est plus long que la durée choisie, toutes les mensualités de l'engagement sont comptées, car vous devrez les payer.</p>
     <p><b>Sources.</b> Prix TTC indicatifs pour particuliers, relevés le <span id="upd">19/11/2026</span> sur les sites des opérateurs et des comparateurs publics (Selectra, Degrouptest, Clubic, Presse-citron). Verisure et Sector Alarm fonctionnent sur devis : nous retenons leurs tarifs publiés les plus courants. Chez Verisure, le tarif de 34,90 €/mois est réservé aux primo-accédants ; nous retenons la formule Sécurité Start. Les prix marqués ≈ sont des estimations. Les promotions s'appliquent automatiquement pendant leur période de validité.</p>
     <p><b>Options.</b> Chez Orange, caméras et détecteurs sont loués avec l'abonnement : rien à acheter. Chez la plupart des concurrents, ils s'achètent en plus. Leur prix est rarement public : les montants marqués ≈ sont des estimations à confirmer sur devis.</p>
-    <p><b>Autosurveillance.</b> SFR Maison Sécurisée et Somfy en mode « à la carte » ne sont pas des télésurveillances 24h/24 permanentes : c'est vous qui recevez les alertes (Somfy permet d'activer un centre de surveillance pendant vos absences).</p>
+    <p><b>Autosurveillance et télésurveillance.</b> Une offre d'autosurveillance coûte moins cher parce qu'aucun centre ne surveille le logement : l'abonné reçoit les alertes et doit réagir seul. Le classement sépare donc les offres par type de service avant de les comparer par prix.</p>
     <p>Les marques citées appartiennent à leurs propriétaires. Vérifiez les conditions auprès de chaque opérateur avant de souscrire.</p>
   </footer>
 </div>
@@ -210,6 +237,12 @@ const eurM = n => eur(Math.round(n*100)/100, Math.round(n*100)%100 ? 2 : 0);
 const durShort = () => state.dur===12 ? "1 an" : state.dur/12 + " ans";
 const frDate = d => d.split("-").reverse().join("/");
 const picked = () => OPTS.filter(o=>state.opts[o.k]);
+const GROUPS = [
+  { l:1, t:"Télésurveillance avec intervention", d:"Un centre de télésurveillance reçoit vos alertes 24h/24, vérifie s'il s'agit d'une vraie intrusion, puis envoie un agent et prévient les secours si besoin, même si vous êtes injoignable." },
+  { l:2, t:"Télésurveillance sans intervention systématique", d:"Un centre ou un service reçoit les alertes et vous prévient, mais le déplacement d'un agent n'est pas inclus d'office." },
+  { l:3, t:"Autosurveillance", d:"Aucun centre ne surveille votre logement : c'est vous qui recevez les alertes sur votre téléphone, qui vérifiez et qui appelez les secours. Si vous ne voyez pas l'alerte, personne ne réagit." },
+];
+const level = o => o.intervention ? 1 : (o.auto ? 3 : 2);
 const NONE = { monthly:0, upfront:0, note:"non proposé", est:false };
 
 // Applique les promos en cours : chaque champ présent dans une promo remplace la valeur de base.
@@ -289,7 +322,10 @@ function render(){
       </div>${promos}`;
   }
 
-  document.getElementById("rows").innerHTML = res.map((x,i)=>{
+  document.getElementById("rows").innerHTML = GROUPS.map(g=>{
+    const its = res.filter(x=>level(x.o)===g.l);
+    if(!its.length) return "";
+    return `<div class="grp grp-${g.l}"><h4>${g.t}</h4><p>${g.d}</p></div>` + its.map((x,i)=>{
     const {o,r}=x;
     const upW = r.upfront/max*100, moW = r.subs/max*100;
     const chips = o.chips.map((c,j)=>`<span class="chip ${o.bad.includes(j)?"bad":(o.featured?"ok":"")}">${c}</span>`).join("")
@@ -301,13 +337,14 @@ function render(){
     const optTxt = picked().map(p=>`<br>${p.label} : ${o.options[p.k].note}`).join("") + (r.anyCam && o.video ? `<br>Vidéo : ${o.video.note}` : "");
     return `<div class="row ${o.featured?"me":""}">
       <div class="rank">${i+1}</div>
-      <div class="name">${o.name}${quiz.has && prov() && prov().ids.includes(o.id) ? '<span class="cur-tag">Votre opérateur</span>' : ""}<small>${o.sub}</small><div class="chips">${chips}</div></div>
+      <div class="name">${o.name}${level(o)===3?'<span class="type-tag auto">Autosurveillance</span>':level(o)===1?'<span class="type-tag tele">Télésurveillance</span>':''}${quiz.has && prov() && prov().ids.includes(o.id) ? '<span class="cur-tag">Votre opérateur</span>' : ""}<small>${o.sub}</small><div class="chips">${chips}</div></div>
       <div class="barbox">
         <div class="bar" role="img" aria-label="Départ ${eur(r.upfront)}, abonnements ${eur(r.subs)}"><i class="up" style="width:${upW}%"></i><i class="mo" style="width:${moW}%"></i></div>
         <div class="detail">${eur(r.upfront)} au départ + ${eur(r.monthly,2)} × ${r.months} mois${free}${lock}${optTxt}</div>
       </div>
       <div class="total"><b>${eurM(r.monthly)}<small>/mois</small></b><span>${r.upfront?`+ ${r.est?"≈ ":""}${eur(r.upfront)} au départ`:"0 € au départ"}</span><span>Total ${durShort()} : ${r.est?"≈ ":""}${eur(r.total)}, soit ${eurM(r.total/state.dur)}/mois</span></div>
     </div>`;
+  }).join("");
   }).join("");
 
   try{ localStorage.setItem("simu-ts2", JSON.stringify(state)); }catch(e){}
@@ -460,7 +497,7 @@ function renderMine(){
     args.push(["Promo caméra extérieure", "En ce moment, l'option caméra extérieure est à 1 €/mois sans engagement, au lieu de 8 €/mois."]);
   }
   if(orange.freeMonths) args.unshift([`${orange.freeMonths} mois offerts en ce moment`, `Les ${orange.freeMonths} premiers mois d'abonnement Orange Maison Protégée sont offerts, soit ${eur(om*orange.freeMonths)} d'économie avec votre configuration.`]);
-  args.push(["Un agent peut intervenir", "Le centre de télésurveillance traite les alertes 24h/24 et envoie un agent si nécessaire."]);
+  args.push(["Une vraie télésurveillance", "Un centre traite vos alertes 24h/24, vérifie l'intrusion et envoie un agent si nécessaire, même si vous ne voyez pas l'alerte. En autosurveillance, c'est à vous de tout gérer."]);
   if(!quiz.has || quiz.engage!==-1) args.push(["Engagement de 12 mois", "Après la première année, vous êtes libre de partir quand vous voulez."]);
 
   const mine = document.getElementById("mine");
