@@ -186,7 +186,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 
   <footer class="notes">
     <p><b>Méthode.</b> Coût total = frais de départ + mensualités sur la durée choisie. Si l'engagement est plus long que la durée choisie, toutes les mensualités de l'engagement sont comptées, car vous devrez les payer.</p>
-    <p><b>Sources.</b> Prix TTC indicatifs pour particuliers, relevés le <span id="upd">19/11/2026</span> sur les sites des opérateurs et des comparateurs publics (Selectra, Degrouptest, Clubic, Presse-citron). Verisure et Sector Alarm fonctionnent sur devis : nous retenons leurs prix d'appel promotionnels, souvent dépassés quand on ajoute des équipements. Les prix marqués ≈ sont des estimations. Les promotions s'appliquent automatiquement pendant leur période de validité.</p>
+    <p><b>Sources.</b> Prix TTC indicatifs pour particuliers, relevés le <span id="upd">19/11/2026</span> sur les sites des opérateurs et des comparateurs publics (Selectra, Degrouptest, Clubic, Presse-citron). Verisure et Sector Alarm fonctionnent sur devis : nous retenons leurs tarifs publiés les plus courants. Chez Verisure, le tarif de 34,90 €/mois est réservé aux primo-accédants ; nous retenons la formule Sécurité Start. Les prix marqués ≈ sont des estimations. Les promotions s'appliquent automatiquement pendant leur période de validité.</p>
     <p><b>Options.</b> Chez Orange, caméras et détecteurs sont loués avec l'abonnement : rien à acheter. Chez la plupart des concurrents, ils s'achètent en plus. Leur prix est rarement public : les montants marqués ≈ sont des estimations à confirmer sur devis.</p>
     <p><b>Autosurveillance.</b> SFR Maison Sécurisée et Somfy en mode « à la carte » ne sont pas des télésurveillances 24h/24 permanentes : c'est vous qui recevez les alertes (Somfy permet d'activer un centre de surveillance pendant vos absences).</p>
     <p>Les marques citées appartiennent à leurs propriétaires. Vérifiez les conditions auprès de chaque opérateur avant de souscrire.</p>
@@ -293,6 +293,7 @@ function render(){
     const {o,r}=x;
     const upW = r.upfront/max*100, moW = r.subs/max*100;
     const chips = o.chips.map((c,j)=>`<span class="chip ${o.bad.includes(j)?"bad":(o.featured?"ok":"")}">${c}</span>`).join("")
+      + (o.perks||[]).map(p=>`<span class="chip ok">${p}</span>`).join("")
       + (r.hasOpts ? (r.optBuy ? `<span class="chip bad">Options à acheter : ${r.est?"≈ ":""}${eur(r.optBuy)}</span>` : `<span class="chip ok">Options sans achat</span>`) : "")
       + (o.featured ? "" : o.active.map(p=>`<span class="chip ok">Promo : ${p.label}${p.end?` jusqu'au ${frDate(p.end)}`:""}</span>`).join(""));
     const lock = r.locked ? ` · engagement ${o.engagement} mois compté en entier` : "";

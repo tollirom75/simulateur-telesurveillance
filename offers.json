@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-19",
- "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance.",
+ "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus).",
  "offers": [
   {
    "id": "orange",
@@ -67,16 +67,17 @@
      "end": null,
      "freeMonths": 2
     }
-   ]
+   ],
+   "perks": []
   },
   {
    "id": "verisure",
    "intervention": true,
    "name": "Verisure",
-   "sub": "Télésurveillance 24h/24, intervention, sur devis",
+   "sub": "Formule Sécurité Start, intervention, sur devis",
    "monthly": {
-    "appart": 34.9,
-    "maison": 34.9
+    "appart": 51.9,
+    "maison": 51.9
    },
    "upfront": 439,
    "engagement": 36,
@@ -120,7 +121,17 @@
      "start": "2026-01-01",
      "end": null,
      "upfront": 219
+    },
+    {
+     "label": "Black Friday : 3 mensualités offertes et installation offerte (pack I2)",
+     "start": "2026-11-09",
+     "end": "2026-11-29",
+     "freeMonths": 3,
+     "upfront": 0
     }
+   ],
+   "perks": [
+    "Garantie anti-cambriolage : jusqu'à 1 500 € remboursés (sous conditions)"
    ]
   },
   {
@@ -169,7 +180,8 @@
    "video": {
     "monthly": 3.99,
     "note": "service « La Vidéo » 3,99 €/mois"
-   }
+   },
+   "perks": []
   },
   {
    "id": "homiris-c",
@@ -219,7 +231,8 @@
    "video": {
     "monthly": 3.99,
     "note": "service « La Vidéo » 3,99 €/mois"
-   }
+   },
+   "perks": []
   },
   {
    "id": "ima",
@@ -227,8 +240,8 @@
    "name": "IMA Protect Tout inclus",
    "sub": "Filiale MAIF/MACIF, télésurveillance 24h/24",
    "monthly": {
-    "appart": 42.5,
-    "maison": 42.5
+    "appart": 37.99,
+    "maison": 37.99
    },
    "upfront": 99,
    "engagement": 12,
@@ -266,7 +279,8 @@
    "bad": [
     0
    ],
-   "promos": []
+   "promos": [],
+   "perks": []
   },
   {
    "id": "nexecur",
@@ -319,7 +333,8 @@
      "end": "2026-11-30",
      "freeMonths": 6
     }
-   ]
+   ],
+   "perks": []
   },
   {
    "id": "sector",
@@ -359,21 +374,15 @@
     }
    },
    "chips": [
-    "Matériel à acheter",
+    "Matériel à acheter (souvent remisé sur devis)",
     "Engagement 36 mois"
    ],
    "bad": [
     0,
     1
    ],
-   "promos": [
-    {
-     "label": "Matériel à 199 € sous conditions",
-     "start": "2026-01-01",
-     "end": null,
-     "upfront": 199
-    }
-   ]
+   "promos": [],
+   "perks": []
   },
   {
    "id": "sfr",
@@ -421,7 +430,8 @@
     0,
     1
    ],
-   "promos": []
+   "promos": [],
+   "perks": []
   },
   {
    "id": "somfy",
@@ -469,7 +479,8 @@
     0,
     1
    ],
-   "promos": []
+   "promos": [],
+   "perks": []
   }
  ]
 }
