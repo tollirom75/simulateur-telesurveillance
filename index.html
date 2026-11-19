@@ -230,6 +230,7 @@ const OPTS = [
 let OFFERS = [];
 const state = { home:"maison", dur:36, opts:{ cam:true, camInt:false, smoke:false, flood:false } };
 try{ const s = JSON.parse(localStorage.getItem("simu-ts2")||"null"); if(s){ Object.assign(state, s); } }catch(e){}
+state.showAuto = false;
 
 const eur = (n, d=0) => n.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d}) + " €";
 const today = new Date().toISOString().slice(0,10);
@@ -325,7 +326,8 @@ function render(){
   document.getElementById("rows").innerHTML = GROUPS.map(g=>{
     const its = res.filter(x=>level(x.o)===g.l);
     if(!its.length) return "";
-    return `<div class="grp grp-${g.l}"><h4>${g.t}</h4><p>${g.d}</p></div>` + its.map((x,i)=>{
+    if(g.l===3 && !state.showAuto) return `<div class="grp grp-3"><h4>${g.t}</h4><p>${g.d}</p><button type="button" class="link" id="show-auto">Voir les offres d'autosurveillance (${its.length})</button></div>`;
+    return `<div class="grp grp-${g.l}"><h4>${g.t}</h4><p>${g.d}</p>${g.l===3?'<button type="button" class="link" id="hide-auto">Masquer ces offres</button>':""}</div>` + its.map((x,i)=>{
     const {o,r}=x;
     const upW = r.upfront/max*100, moW = r.subs/max*100;
     const chips = o.chips.map((c,j)=>`<span class="chip ${o.bad.includes(j)?"bad":(o.featured?"ok":"")}">${c}</span>`).join("")
@@ -352,6 +354,10 @@ function render(){
 
 document.getElementById("opts").innerHTML = OPTS.map(o=>`<button type="button" class="pill" id="opt-${o.k}" data-k="${o.k}" aria-pressed="false">${o.label}</button>`).join("");
 document.getElementById("opts").addEventListener("click",e=>{const b=e.target.closest(".pill"); if(b){state.opts[b.dataset.k]=!state.opts[b.dataset.k]; render(); if(!document.getElementById("mine").hidden) renderMine();}});
+document.getElementById("rows").addEventListener("click",e=>{
+  if(e.target.id==="show-auto"){ state.showAuto=true; render(); }
+  else if(e.target.id==="hide-auto"){ state.showAuto=false; render(); }
+});
 document.getElementById("seg-home").addEventListener("click",e=>{const b=e.target.closest("button"); if(b){state.home=b.dataset.v; render(); if(!document.getElementById("mine").hidden) renderMine();}});
 document.getElementById("seg-dur").addEventListener("click",e=>{const b=e.target.closest("button"); if(b){state.dur=+b.dataset.v; render();}});
 
