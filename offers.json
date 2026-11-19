@@ -123,11 +123,10 @@
      "upfront": 219
     },
     {
-     "label": "Black Friday : 3 mensualités offertes et installation offerte (pack I2)",
+     "label": "Black Friday : 3 premiers mois et serrure connectée offerts, tarifs réduits sur le matériel supplémentaire",
      "start": "2026-11-09",
      "end": "2026-11-29",
-     "freeMonths": 3,
-     "upfront": 0
+     "freeMonths": 3
     }
    ],
    "perks": [
