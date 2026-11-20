@@ -74,9 +74,9 @@
    "id": "verisure",
    "intervention": true,
    "name": "Verisure",
-   "sub": "Formule Sécurité Start, intervention, sur devis",
+   "sub": "Formule Sécurité Start (tarif catalogue), intervention",
    "monthly": {
-    "appart": 51.9,
+    "appart": 41.9,
     "maison": 51.9
    },
    "upfront": 439,
