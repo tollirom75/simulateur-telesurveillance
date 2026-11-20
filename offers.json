@@ -1,6 +1,6 @@
 {
  "updated": "2026-11-19",
- "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus). auto:true = autosurveillance (aucun centre de télésurveillance : l'abonné gère seul ses alertes).",
+ "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus). auto:true = autosurveillance (aucun centre de télésurveillance : l'abonné gère seul ses alertes). Prix d'option = prix par unité ; included = nombre d'unités incluses sans frais.",
  "offers": [
   {
    "id": "orange",
@@ -172,10 +172,11 @@
      "note": "89 € d'achat + 40 € de mise en service"
     },
     "smoke": {
-     "monthly": 0,
+     "monthly": 1.5,
      "upfront": 0,
-     "note": "inclus dans Sérénité",
-     "est": false
+     "est": true,
+     "included": 1,
+     "note": "1 détecteur inclus dans Sérénité ; ≈ 1,50 €/mois par détecteur en plus"
     },
     "flood": {
      "monthly": 1.5,
@@ -197,10 +198,8 @@
      "freeMonths": 3,
      "options": {
       "flood": {
-       "monthly": 0,
-       "upfront": 0,
-       "est": false,
-       "note": "offerte (promo jusqu'au 28/11)"
+       "included": 1,
+       "note": "1 sonde offerte (promo jusqu'au 28/11), 1,50 €/mois par sonde en plus"
       }
      }
     }
@@ -263,10 +262,8 @@
      "freeMonths": 3,
      "options": {
       "flood": {
-       "monthly": 0,
-       "upfront": 0,
-       "est": false,
-       "note": "offerte (promo jusqu'au 28/11)"
+       "included": 1,
+       "note": "1 sonde offerte (promo jusqu'au 28/11), 1,50 €/mois par sonde en plus"
       }
      }
     }
@@ -345,9 +342,10 @@
     },
     "camInt": {
      "monthly": 0,
-     "upfront": 0,
-     "est": false,
-     "note": "caméra HD intégrée à la centrale"
+     "upfront": 149,
+     "est": true,
+     "included": 1,
+     "note": "1 caméra HD intégrée à la centrale ; ≈ 149 € par caméra en plus"
     },
     "smoke": {
      "monthly": 0,
@@ -448,9 +446,10 @@
     },
     "camInt": {
      "monthly": 0,
-     "upfront": 0,
-     "note": "incluse dans le Pack Alerte Vidéo",
-     "est": false
+     "upfront": 49,
+     "est": true,
+     "included": 1,
+     "note": "1 caméra incluse dans le Pack Alerte Vidéo ; ≈ 49 € par caméra en plus"
     },
     "smoke": {
      "monthly": 0,

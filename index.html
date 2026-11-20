@@ -106,7 +106,12 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.4rem)
 .pill::before{content:"";width:14px;height:14px;border-radius:4px;border:1.5px solid var(--muted);flex:none}
 .pill[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .pill[aria-pressed="true"]::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent-soft)}
-.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pill:focus-visible,.qb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pillq{display:inline-flex;align-items:center;gap:6px}
+.qty{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:99px;padding:2px}
+.qb{width:30px;height:30px;border:0;border-radius:50%;background:var(--surface);color:var(--ink);font:600 1.05rem var(--body);cursor:pointer;line-height:1}
+.qb:disabled{opacity:.35;cursor:default}
+.qty b{min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
 
 .simu{display:flex;flex-direction:column;gap:22px}
 .quiz{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px}
@@ -228,16 +233,39 @@ const OPTS = [
   { k:"flood",  label:"Détecteur d'inondation" },
 ];
 let OFFERS = [];
-const state = { home:"maison", dur:36, opts:{ cam:true, camInt:false, smoke:false, flood:false } };
+const state = { home:"maison", dur:36, opts:{ cam:1, camInt:0, smoke:0, flood:0 } };
 try{ const s = JSON.parse(localStorage.getItem("simu-ts2")||"null"); if(s){ Object.assign(state, s); } }catch(e){}
 state.showAuto = false;
+OPTS.forEach(({k})=>{ const v = state.opts[k]; state.opts[k] = v===true ? 1 : (+v>0 ? Math.min(3, Math.round(+v)) : 0); });
 
 const eur = (n, d=0) => n.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d}) + " €";
 const today = new Date().toISOString().slice(0,10);
 const eurM = n => eur(Math.round(n*100)/100, Math.round(n*100)%100 ? 2 : 0);
 const durShort = () => state.dur===12 ? "1 an" : state.dur/12 + " ans";
 const frDate = d => d.split("-").reverse().join("/");
-const picked = () => OPTS.filter(o=>state.opts[o.k]);
+const picked = () => OPTS.filter(o=>state.opts[o.k]>0).map(o=>({ ...o, q:state.opts[o.k] }));
+// Prix d'une option pour q unités : les "included" premières unités sont sans frais, le prix est unitaire.
+const optCost = (opt, q) => { const n = Math.max(0, q - (opt.included||0)); return { monthly:opt.monthly*n, upfront:opt.upfront*n, est:!!opt.est && n>0 }; };
+const qLabel = p => p.q>1 ? `${p.label} × ${p.q}` : p.label;
+function pillsHTML(src){
+  return OPTS.map(o=>{
+    const q = src[o.k]||0;
+    return `<div class="pillq"><button type="button" class="pill" data-k="${o.k}" aria-pressed="${q>0}">${o.label}</button>${q?`<span class="qty" role="group" aria-label="Quantité ${o.label.toLowerCase()}"><button type="button" class="qb" data-k="${o.k}" data-d="-1" aria-label="En retirer un">−</button><b>${q}</b><button type="button" class="qb" data-k="${o.k}" data-d="1" aria-label="En ajouter un"${q>=3?" disabled":""}>+</button></span>`:""}</div>`;
+  }).join("");
+}
+// Coche = 1 par défaut ; + et − ajustent de 0 à 3. Renvoie la clé modifiée pour redonner le focus.
+function pillsClick(e, src){
+  const qb = e.target.closest(".qb");
+  if(qb){ const k=qb.dataset.k; src[k] = Math.max(0, Math.min(3, (src[k]||0) + (+qb.dataset.d))); return { k, d:qb.dataset.d }; }
+  const b = e.target.closest(".pill");
+  if(b){ const k=b.dataset.k; src[k] = src[k]>0 ? 0 : 1; return { k }; }
+  return null;
+}
+function refocus(root, hit){
+  if(!hit) return;
+  const el = (hit.d && root.querySelector(`.qb[data-k="${hit.k}"][data-d="${hit.d}"]`)) || root.querySelector(`.pill[data-k="${hit.k}"]`);
+  if(el) el.focus();
+}
 const GROUPS = [
   { l:1, t:"Télésurveillance avec intervention", d:"Un centre de télésurveillance reçoit vos alertes 24h/24, vérifie s'il s'agit d'une vraie intrusion, puis envoie un agent et prévient les secours si besoin, même si vous êtes injoignable." },
   { l:2, t:"Télésurveillance sans intervention systématique", d:"Un centre ou un service reçoit les alertes et vous prévient, mais le déplacement d'un agent n'est pas inclus d'office." },
@@ -263,8 +291,8 @@ function effective(o){
 }
 
 function compute(o){
-  const sel = picked().map(x=>o.options[x.k]);
-  const anyCam = state.opts.cam || state.opts.camInt;
+  const sel = picked().map(x=>optCost(o.options[x.k], x.q));
+  const anyCam = state.opts.cam>0 || state.opts.camInt>0;
   const months = Math.max(state.dur, o.engagement);
   const optMonthly = sel.reduce((t,x)=>t+x.monthly,0) + (anyCam && o.video ? o.video.monthly : 0);
   const optBuy = sel.reduce((t,x)=>t+x.upfront,0);
@@ -280,13 +308,13 @@ function compute(o){
 function render(){
   document.querySelectorAll("#seg-home button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===state.home));
   document.querySelectorAll("#seg-dur button").forEach(b=>b.setAttribute("aria-pressed", +b.dataset.v===state.dur));
-  document.querySelectorAll("#opts .pill").forEach(b=>b.setAttribute("aria-pressed", !!state.opts[b.dataset.k]));
+  document.getElementById("opts").innerHTML = pillsHTML(state.opts);
 
   const res = OFFERS.map(effective).map(o=>({o, r:compute(o)})).sort((a,b)=>a.r.total-b.r.total);
   if(!res.length) return;
   const max = Math.max(...res.map(x=>x.r.total));
   const durTxt = state.dur===12 ? "1 an" : state.dur/12 + " ans";
-  const optList = picked().map(x=>x.label.toLowerCase()).join(", ");
+  const optList = picked().map(x=>qLabel(x).toLowerCase()).join(", ");
   document.getElementById("listsub").textContent = `${state.home==="maison"?"Maison":"Appartement"}, ${durTxt}${optList?`, avec ${optList}`:""}`;
 
   const me = res.find(x=>x.o.featured);
@@ -336,7 +364,7 @@ function render(){
       + (o.featured ? "" : o.active.map(p=>`<span class="chip ok">Promo : ${p.label}${p.end?` jusqu'au ${frDate(p.end)}`:""}</span>`).join(""));
     const lock = r.locked ? ` · engagement ${o.engagement} mois compté en entier` : "";
     const free = r.free ? ` (dont ${r.free} offerts)` : "";
-    const optTxt = picked().map(p=>`<br>${p.label} : ${o.options[p.k].note}`).join("") + (r.anyCam && o.video ? `<br>Vidéo : ${o.video.note}` : "");
+    const optTxt = picked().map(p=>`<br>${qLabel(p)} : ${o.options[p.k].note}${p.q>1 && !o.options[p.k].included ? " (par unité)" : ""}`).join("") + (r.anyCam && o.video ? `<br>Vidéo : ${o.video.note}` : "");
     return `<div class="row ${o.featured?"me":""}">
       <div class="rank">${i+1}</div>
       <div class="name">${o.name}${level(o)===3?'<span class="type-tag auto">Autosurveillance</span>':level(o)===1?'<span class="type-tag tele">Télésurveillance</span>':''}${quiz.has && prov() && prov().ids.includes(o.id) ? '<span class="cur-tag">Votre opérateur</span>' : ""}<small>${o.sub}</small><div class="chips">${chips}</div></div>
@@ -352,8 +380,8 @@ function render(){
   try{ localStorage.setItem("simu-ts2", JSON.stringify(state)); }catch(e){}
 }
 
-document.getElementById("opts").innerHTML = OPTS.map(o=>`<button type="button" class="pill" id="opt-${o.k}" data-k="${o.k}" aria-pressed="false">${o.label}</button>`).join("");
-document.getElementById("opts").addEventListener("click",e=>{const b=e.target.closest(".pill"); if(b){state.opts[b.dataset.k]=!state.opts[b.dataset.k]; render(); if(!document.getElementById("mine").hidden) renderMine();}});
+document.getElementById("opts").innerHTML = pillsHTML(state.opts);
+document.getElementById("opts").addEventListener("click",e=>{ const hit = pillsClick(e, state.opts); if(hit){ render(); if(!document.getElementById("mine").hidden) renderMine(); refocus(document.getElementById("opts"), hit); } });
 document.getElementById("rows").addEventListener("click",e=>{
   if(e.target.id==="show-auto"){ state.showAuto=true; render(); }
   else if(e.target.id==="hide-auto"){ state.showAuto=false; render(); }
@@ -372,7 +400,7 @@ const PROVIDERS = [
   { v:"somfy", label:"Somfy", ids:["somfy"] },
   { v:"other", label:"Un autre opérateur", ids:[] },
 ];
-const quiz = { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null };
+const quiz = { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null, owned:{cam:0, camInt:0, smoke:0, flood:0} };
 const prov = () => PROVIDERS.find(p=>p.v===quiz.provider);
 const offerById = id => OFFERS.find(o=>o.id===id);
 
@@ -393,7 +421,9 @@ const STEPS = [
   { key:"when", when:()=>quiz.has && quiz.bought==="yes", q:"Vous l'avez acheté il y a combien de temps ?",
     choices:[[1,"Moins de 2 ans"],[3,"2 à 5 ans"],[6,"Plus de 5 ans"],[-1,"Je ne sais plus"]],
     set:v=>quiz.when=v },
-  { key:"opts", q:"Quels équipements vous intéressent ?", hint:"Plusieurs choix possibles, ou aucun.", type:"opts" },
+  { key:"owned", when:()=>quiz.has, q:"Quels équipements avez-vous déjà, et combien ?", hint:"En plus de la centrale et des détecteurs de base. Laissez vide si vous n'en avez pas.", type:"owned" },
+  { key:"opts", q:()=>quiz.has ? "Combien d'équipements voulez-vous au total ?" : "Quels équipements vous intéressent ?",
+    hint:()=>quiz.has ? "Vos équipements actuels sont déjà comptés. Ajoutez-en si vous le souhaitez." : "Cochez ce qui vous intéresse, puis ajustez les quantités avec + et −.", type:"opts" },
 ];
 const visible = () => STEPS.filter(s=>!s.when || s.when());
 
@@ -406,25 +436,27 @@ function renderQuiz(){
     const p = prov(); const o = p && p.ids[0] && offerById(p.ids[0]);
     const guess = quiz.pay ?? (o ? Math.round(o.monthly[state.home]) : 35);
     body = `<div class="numrow"><input id="q-pay" type="number" inputmode="decimal" min="0" step="0.5" value="${guess}" aria-label="Montant mensuel en euros"><span>€ / mois</span><button type="button" class="go" id="q-next">Continuer</button></div>`;
-  } else if(st.type==="opts"){
-    body = `<div class="pills" id="q-opts">${OPTS.map(o=>`<button type="button" class="pill" data-k="${o.k}" aria-pressed="${!!state.opts[o.k]}">${o.label}</button>`).join("")}</div>
-      <div><button type="button" class="go" id="q-next">Voir mon résultat</button></div>`;
+  } else if(st.type==="opts" || st.type==="owned"){
+    body = `<div class="pills" id="q-opts">${pillsHTML(st.type==="owned" ? quiz.owned : state.opts)}</div>
+      <div><button type="button" class="go" id="q-next">${st.type==="owned" ? "Continuer" : "Voir mon résultat"}</button></div>`;
   } else {
     body = `<div class="answers">${st.choices.map(([v,l],i)=>`<button type="button" class="ans" data-i="${i}">${l}</button>`).join("")}</div>`;
   }
   box.innerHTML = `
     <div class="qtop"><span>Question ${quiz.step+1} sur ${steps.length}</span><button type="button" class="link" id="q-skip">Voir directement le comparatif</button></div>
     <div class="progress"><i style="width:${(quiz.step)/steps.length*100}%"></i></div>
-    <h2>${st.q}</h2>${st.hint?`<p class="hint">${st.hint}</p>`:""}
+    <h2>${typeof st.q==="function" ? st.q() : st.q}</h2>${st.hint?`<p class="hint">${typeof st.hint==="function" ? st.hint() : st.hint}</p>`:""}
     ${body}
     ${quiz.step>0?`<div class="qnav"><button type="button" class="link" id="q-back">← Question précédente</button></div>`:""}`;
 
   box.querySelectorAll(".ans").forEach(b=>b.onclick=()=>{ st.set(st.choices[+b.dataset.i][0]); next(); });
   const pills = box.querySelector("#q-opts");
-  if(pills) pills.onclick = e=>{ const b=e.target.closest(".pill"); if(!b) return; state.opts[b.dataset.k]=!state.opts[b.dataset.k]; b.setAttribute("aria-pressed", state.opts[b.dataset.k]); };
+  if(pills){ const src = st.type==="owned" ? quiz.owned : state.opts;
+    pills.onclick = e=>{ const hit = pillsClick(e, src); if(hit){ pills.innerHTML = pillsHTML(src); refocus(pills, hit); } }; }
   const nx = box.querySelector("#q-next");
   if(nx) nx.onclick = ()=>{
     if(st.type==="number"){ const v = parseFloat(String(box.querySelector("#q-pay").value).replace(",", ".")); quiz.pay = isFinite(v) && v>=0 ? v : 0; }
+    if(st.type==="owned"){ state.opts = { ...quiz.owned }; }
     next();
   };
   const inp = box.querySelector("#q-pay"); if(inp){ inp.focus(); inp.onkeydown = e=>{ if(e.key==="Enter") nx.click(); }; }
@@ -445,7 +477,7 @@ function finish(answered){
 }
 
 function restart(){
-  Object.assign(quiz, { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null });
+  Object.assign(quiz, { step:0, has:null, provider:null, engage:null, pay:null, bought:null, when:null, owned:{cam:0, camInt:0, smoke:0, flood:0} });
   document.getElementById("mine").hidden = true;
   document.getElementById("simu").hidden = true;
   document.getElementById("quiz").hidden = false;
@@ -458,7 +490,7 @@ function renderMine(){
   const orange = effective(OFFERS.find(o=>o.featured));
   const r = compute(orange);                       // state.dur = 36
   const om = r.monthly, fas = r.base;
-  const optList = picked().map(x=>x.label.toLowerCase());
+  const optList = picked().map(x=>qLabel(x).toLowerCase());
   const args = [];
   let head = "", gainHtml = "";
 
@@ -469,10 +501,14 @@ function renderMine(){
     let stay = quiz.pay * H, extra = "";
     // Si des options sont souhaitées, on les ajoute au coût actuel au tarif de l'opérateur (quand il est connu).
     const cur = p && p.ids[0] && offerById(p.ids[0]) ? effective(offerById(p.ids[0])) : null;
-    if(cur && picked().length){
-      const sel = picked().map(x=>cur.options[x.k]);
-      const add = sel.reduce((t,x)=>t+x.upfront,0) + sel.reduce((t,x)=>t+x.monthly,0)*H;
-      stay += add; if(add>0) extra = ` en ajoutant les mêmes options chez ${name}`;
+    // Équipements déjà détenus : inclus dans le prix actuel. Seuls ceux en plus sont ajoutés, au tarif de l'opérateur actuel.
+    if(cur){
+      let add = 0;
+      OPTS.forEach(({k})=>{
+        const want = state.opts[k]||0, own = quiz.owned[k]||0;
+        if(want > own){ const a = optCost(cur.options[k], want), b = optCost(cur.options[k], own); add += (a.upfront-b.upfront) + (a.monthly-b.monthly)*H; }
+      });
+      stay += add; if(add>0) extra = ` en ajoutant chez ${name} les équipements en plus`;
     }
     const sw = quiz.pay*e + fas + om*Math.max(0, H-e-orange.freeMonths);
     const gain = stay - sw;
@@ -497,8 +533,8 @@ function renderMine(){
     args.push(["Rien à acheter", "Centrale, détecteurs et sirène sont fournis et installés par un technicien, puis entretenus pendant tout le contrat."]);
   }
   if(optList.length){
-    const camPromo = state.opts.cam && orange.active.some(p=>p.options && p.options.cam);
-    args.push(["Vos options en location", `${optList.join(", ").replace(/^./,c=>c.toUpperCase())} : ${eur(OPTS.filter(o=>state.opts[o.k]).reduce((t,o)=>t+orange.options[o.k].monthly,0),2)}/mois au total chez Orange, sans achat d'équipement.${camPromo?" La caméra extérieure est en ce moment à 1 €/mois sans engagement.":""}`]);
+    const camPromo = state.opts.cam>0 && orange.active.some(p=>p.options && p.options.cam);
+    args.push(["Vos options en location", `${optList.join(", ").replace(/^./,c=>c.toUpperCase())} : ${eur(picked().reduce((t,p)=>t+optCost(orange.options[p.k], p.q).monthly,0),2)}/mois au total chez Orange, sans achat d'équipement.${camPromo?" La caméra extérieure est en ce moment à 1 €/mois sans engagement.":""}`]);
   } else if(orange.active.some(p=>p.options && p.options.cam)){
     args.push(["Promo caméra extérieure", "En ce moment, l'option caméra extérieure est à 1 €/mois sans engagement, au lieu de 8 €/mois."]);
   }
