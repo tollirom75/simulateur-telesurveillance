@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-19",
+ "updated": "2026-11-20",
  "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus). auto:true = autosurveillance (aucun centre de télésurveillance : l'abonné gère seul ses alertes). Prix d'option = prix par unité ; included = nombre d'unités incluses sans frais.",
  "offers": [
   {
@@ -52,7 +52,7 @@
     {
      "label": "Option caméra extérieure à 1 €/mois sans engagement, au lieu de 8 €/mois",
      "start": "2026-11-19",
-     "end": null,
+     "end": "2026-12-02",
      "options": {
       "cam": {
        "monthly": 1,
@@ -319,7 +319,14 @@
    "bad": [
     0
    ],
-   "promos": [],
+   "promos": [
+    {
+     "label": "3 mois d'abonnement offerts (nouvelle souscription À la carte ou Tout inclus, hors mise en service et matériel)",
+     "start": "2026-11-02",
+     "end": "2026-12-31",
+     "freeMonths": 3
+    }
+   ],
    "perks": []
   },
   {
