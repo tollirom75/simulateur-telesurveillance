@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20",
+ "updated": "2026-11-22",
  "_doc": "Prix TTC particuliers. upfront = à payer au départ (matériel + installation + frais d'accès au service), nombre ou {appart,maison}. engagement en mois (0 = sans). options = prix hors promo de chaque option : cam (caméra extérieure), camInt (caméra intérieure), smoke (détecteur de fumée), flood (détecteur d'inondation) ; chacune {monthly, upfront, est, note}. video = service vidéo mensuel facturé une seule fois dès qu'une caméra est choisie. promos : appliquées automatiquement entre start et end (inclus, AAAA-MM-JJ, end null = jusqu'à nouvel ordre). Champs possibles d'une promo : label, start, end, monthly {appart,maison}, upfront, freeMonths, options {cam|camInt|smoke|flood: {monthly, upfront, note}}. est:true = estimation. featured:true = offre mise en avant. intervention:true = un agent peut être envoyé par le centre de télésurveillance. perks = avantages à afficher en vert (garanties, services inclus). auto:true = autosurveillance (aucun centre de télésurveillance : l'abonné gère seul ses alertes). Prix d'option = prix par unité ; included = nombre d'unités incluses sans frais.",
  "offers": [
   {
@@ -64,7 +64,7 @@
     {
      "label": "2 mois d'abonnement offerts, en appartement comme en maison",
      "start": "2026-11-19",
-     "end": null,
+     "end": "2026-12-02",
      "freeMonths": 2
     }
    ],
@@ -442,7 +442,7 @@
     "appart": 14.99,
     "maison": 14.99
    },
-   "upfront": 121,
+   "upfront": 139,
    "engagement": 0,
    "options": {
     "cam": {
@@ -493,7 +493,7 @@
     "appart": 9.99,
     "maison": 9.99
    },
-   "upfront": 369,
+   "upfront": 359,
    "engagement": 0,
    "options": {
     "cam": {
@@ -522,7 +522,7 @@
     }
    },
    "chips": [
-    "Kit 369 € à acheter",
+    "Kit 359 € à acheter",
     "Pose par vos soins",
     "Sans engagement"
    ],
