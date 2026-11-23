@@ -294,9 +294,9 @@
     },
     "camInt": {
      "monthly": 5.9,
-     "upfront": 0,
+     "upfront": 99,
      "est": false,
-     "note": "5,90 €/mois sans engagement"
+     "note": "5,90 €/mois + 99 € d'installation par un professionnel"
     },
     "smoke": {
      "monthly": 0,
@@ -343,9 +343,9 @@
    "options": {
     "cam": {
      "monthly": 0,
-     "upfront": 199,
+     "upfront": 0,
      "est": false,
-     "note": "caméra Look'out : 199 € d'achat"
+     "note": "non proposée sur le site Nexecur"
     },
     "camInt": {
      "monthly": 0,
