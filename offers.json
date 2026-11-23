@@ -396,7 +396,7 @@
     "maison": 37.9
    },
    "upfront": 799,
-   "engagement": 36,
+   "engagement": 12,
    "options": {
     "cam": {
      "monthly": 0,
@@ -425,11 +425,10 @@
    },
    "chips": [
     "Matériel à acheter (souvent remisé sur devis)",
-    "Engagement 36 mois"
+    "Engagement 12 mois"
    ],
    "bad": [
-    0,
-    1
+    0
    ],
    "promos": [],
    "perks": []
