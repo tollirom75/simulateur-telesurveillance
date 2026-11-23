@@ -389,7 +389,7 @@
   {
    "id": "sector",
    "intervention": true,
-   "name": "Sector Alarm",
+   "name": "Sector Alarm Essentiel",
    "sub": "Télésurveillance 24h/24, sur devis",
    "monthly": {
     "appart": 37.9,
@@ -425,6 +425,53 @@
    },
    "chips": [
     "Matériel à acheter (souvent remisé sur devis)",
+    "Engagement 12 mois"
+   ],
+   "bad": [
+    0
+   ],
+   "promos": [],
+   "perks": []
+  },
+  {
+   "id": "sector-s",
+   "intervention": true,
+   "name": "Sector Alarm Sérénité",
+   "sub": "Télésurveillance 24h/24, formule supérieure, sur devis",
+   "monthly": {
+    "appart": 43.9,
+    "maison": 43.9
+   },
+   "upfront": 999,
+   "engagement": 12,
+   "options": {
+    "cam": {
+     "monthly": 0,
+     "upfront": 199,
+     "est": true,
+     "note": "≈ 199 € d'achat"
+    },
+    "camInt": {
+     "monthly": 0,
+     "upfront": 149,
+     "est": true,
+     "note": "≈ 149 € d'achat"
+    },
+    "smoke": {
+     "monthly": 0,
+     "upfront": 99,
+     "est": true,
+     "note": "≈ 99 € d'achat"
+    },
+    "flood": {
+     "monthly": 0,
+     "upfront": 79,
+     "est": true,
+     "note": "≈ 79 € d'achat"
+    }
+   },
+   "chips": [
+    "Matériel à acheter (999 € au tarif catalogue)",
     "Engagement 12 mois"
    ],
    "bad": [
