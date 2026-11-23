@@ -161,9 +161,9 @@
    "options": {
     "cam": {
      "monthly": 0,
-     "upfront": 239,
-     "est": true,
-     "note": "≈ 199 € d'achat + 40 € de mise en service"
+     "upfront": 249,
+     "est": false,
+     "note": "caméra HD-100 avec panneau solaire 179 € + 70 € de mise en service"
     },
     "camInt": {
      "monthly": 0,
@@ -174,9 +174,9 @@
     "smoke": {
      "monthly": 1.5,
      "upfront": 0,
-     "est": true,
+     "est": false,
      "included": 1,
-     "note": "1 détecteur inclus dans Sérénité ; ≈ 1,50 €/mois par détecteur en plus"
+     "note": "1 détecteur inclus dans Sérénité ; 1,50 €/mois par détecteur en plus"
     },
     "flood": {
      "monthly": 1.5,
@@ -224,9 +224,9 @@
    "options": {
     "cam": {
      "monthly": 0,
-     "upfront": 239,
-     "est": true,
-     "note": "≈ 199 € d'achat + 40 € de mise en service"
+     "upfront": 249,
+     "est": false,
+     "note": "caméra HD-100 avec panneau solaire 179 € + 70 € de mise en service"
     },
     "camInt": {
      "monthly": 0,
@@ -235,10 +235,10 @@
      "note": "89 € d'achat + 40 € de mise en service"
     },
     "smoke": {
-     "monthly": 3,
+     "monthly": 1.5,
      "upfront": 0,
-     "est": true,
-     "note": "≈ 3 €/mois"
+     "est": false,
+     "note": "1,50 €/mois"
     },
     "flood": {
      "monthly": 1.5,
@@ -302,13 +302,14 @@
      "monthly": 0,
      "upfront": 99,
      "est": true,
-     "note": "≈ 99 € d'achat"
+     "note": "1 détecteur de fumée connecté inclus dans Tout inclus ; ≈ 99 € par détecteur en plus",
+     "included": 1
     },
     "flood": {
-     "monthly": 0,
-     "upfront": 79,
-     "est": true,
-     "note": "≈ 79 € d'achat"
+     "monthly": 2.5,
+     "upfront": 0,
+     "est": false,
+     "note": "2,50 €/mois"
     }
    },
    "chips": [
@@ -499,8 +500,8 @@
     "cam": {
      "monthly": 0,
      "upfront": 249,
-     "est": true,
-     "note": "≈ 249 € d'achat"
+     "est": false,
+     "note": "Somfy Outdoor Camera 2 : 249 €"
     },
     "camInt": {
      "monthly": 0,
@@ -510,9 +511,9 @@
     },
     "smoke": {
      "monthly": 0,
-     "upfront": 69,
-     "est": true,
-     "note": "≈ 69 € d'achat"
+     "upfront": 77.5,
+     "est": false,
+     "note": "détecteur de fumée connecté : 77,50 €"
     },
     "flood": {
      "monthly": 0,
@@ -530,7 +531,23 @@
     0,
     1
    ],
-   "promos": [],
+   "promos": [
+    {
+     "label": "Black Friday : caméra extérieure à 189 € et détecteur de fumée à 51,50 €",
+     "start": "2026-11-16",
+     "end": "2026-11-30",
+     "options": {
+      "cam": {
+       "upfront": 189,
+       "note": "Somfy Outdoor Camera 2 : 189 € au lieu de 249 €"
+      },
+      "smoke": {
+       "upfront": 51.5,
+       "note": "détecteur de fumée connecté : 51,50 € au lieu de 77,50 €"
+      }
+     }
+    }
+   ],
    "perks": []
   }
  ]
