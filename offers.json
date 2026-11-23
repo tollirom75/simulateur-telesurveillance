@@ -287,10 +287,10 @@
    "engagement": 12,
    "options": {
     "cam": {
-     "monthly": 0,
-     "upfront": 199,
-     "est": true,
-     "note": "≈ 199 € d'achat"
+     "monthly": 9.9,
+     "upfront": 99,
+     "est": false,
+     "note": "9,90 €/mois + 99 € d'installation par un professionnel"
     },
     "camInt": {
      "monthly": 5.9,
@@ -344,8 +344,8 @@
     "cam": {
      "monthly": 0,
      "upfront": 199,
-     "est": true,
-     "note": "≈ 199 € d'achat"
+     "est": false,
+     "note": "caméra Look'out : 199 € d'achat"
     },
     "camInt": {
      "monthly": 0,
