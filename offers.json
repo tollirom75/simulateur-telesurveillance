@@ -102,9 +102,9 @@
     },
     "flood": {
      "monthly": 0,
-     "upfront": 79,
-     "est": true,
-     "note": "≈ 79 € d'achat"
+     "upfront": 0,
+     "est": false,
+     "note": "non proposé dans le catalogue Verisure"
     }
    },
    "chips": [
