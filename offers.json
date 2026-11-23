@@ -52,7 +52,7 @@
     {
      "label": "Option caméra extérieure à 1 €/mois sans engagement, au lieu de 8 €/mois",
      "start": "2026-11-19",
-     "end": "2027-02-03",
+     "end": "2026-12-02",
      "options": {
       "cam": {
        "monthly": 1,
