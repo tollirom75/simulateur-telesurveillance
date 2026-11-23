@@ -85,14 +85,14 @@
     "cam": {
      "monthly": 8,
      "upfront": 299,
-     "est": false,
-     "note": "pack V2 détecteur extérieur vidéo : 299 € + 8 €/mois"
+     "est": true,
+     "note": "≈ pack V2 détecteur extérieur vidéo : 299 € + 8 €/mois (sur devis)"
     },
     "camInt": {
      "monthly": 5,
      "upfront": 199,
-     "est": false,
-     "note": "pack A3 caméra intérieure : 199 € + 5 €/mois"
+     "est": true,
+     "note": "≈ pack A3 caméra intérieure : 199 € + 5 €/mois (sur devis)"
     },
     "smoke": {
      "monthly": 0,
